@@ -5,6 +5,7 @@
 #include <USBHost_t36.h>
 
 #include "io_audio.h"
+#include "io_midi_knob.h"
 
 USBHost myusb;
 USBHub hub1(myusb);
@@ -43,6 +44,13 @@ void controlChangeHandler(byte channel, byte control, byte value) {
     Serial.print(control, DEC);
     Serial.print(", value=");
     Serial.println(value, DEC);
+
+    byte knob = control % KNOB_COUNT;
+    int8_t direction = getKnobDirection(knob, value);
+
+    if (knob == 1) {
+        setNextWaveform(direction);
+    }
 }
 
 void midiInit() {

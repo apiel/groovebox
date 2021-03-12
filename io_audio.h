@@ -5,6 +5,10 @@
 #include <Audio.h>
 #include <Metro.h>
 
+#include "io_util.h"
+
+#define WAVEFORM_COUNT 9
+
 AudioSynthWaveform waveform;
 AudioEffectEnvelope env;
 AudioOutputMQS audioOut;
@@ -15,9 +19,16 @@ Metro timerHold = Metro(150);
 Metro timerNote = Metro(1000);
 
 bool io_playing = true;
+byte currentWaveform = 0;
 
 void audioPlay(bool playing) { io_playing = playing; }
 bool audioIsPlaying() { return io_playing; }
+
+// need to make a PR to get waveform count
+void setNextWaveform(int8_t direction) {
+    currentWaveform = mod(currentWaveform + direction, WAVEFORM_COUNT);
+    waveform.begin(currentWaveform);
+}
 
 void audioInit() {
     AudioMemory(10);
