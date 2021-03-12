@@ -1,10 +1,10 @@
-#include <groovebox.h>
+#include <io_groovebox.h>
 
 void setup() {
     Serial.begin(115200);
-    grooveboxInit();
+    ioGrooveboxInit();
 }
 
 void loop() {
-    grooveboxLoop();
+    ioGrooveboxLoop();
 }
