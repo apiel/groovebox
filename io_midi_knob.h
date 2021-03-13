@@ -7,7 +7,8 @@
 
 #define KNOB_COUNT 18
 #define KNOB_MAX_VALUE 127
-#define KNOB_INIT_VALUE 0
+// use first time the know is turn to get the current value
+#define KNOB_INIT_VALUE 255
 
 byte knobValues[KNOB_COUNT] = {
     KNOB_INIT_VALUE, KNOB_INIT_VALUE, KNOB_INIT_VALUE, KNOB_INIT_VALUE,

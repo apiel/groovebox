@@ -50,6 +50,14 @@ void controlChangeHandler(byte channel, byte control, byte value) {
 
     if (knob == 1) {
         setNextWaveform(direction);
+    } else if (knob == 5) {
+        setAttack(direction);
+    } else if (knob == 6) {
+        setDecay(direction);
+    } else if (knob == 7) {
+        setSustain(direction);
+    } else if (knob == 8) {
+        setRelease(direction);
     }
 }
 
