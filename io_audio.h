@@ -27,6 +27,9 @@ float decayMs = 50;
 float sustainLevel = 0;  // 0 - 1.0
 float releaseMs = 0;
 
+float frequency = 440;
+float amplitude = 1.0;
+
 void audioPlay(bool playing) { io_playing = playing; }
 bool audioIsPlaying() { return io_playing; }
 
@@ -52,15 +55,24 @@ void setRelease(int8_t direction) {
 }
 
 void setSustain(int8_t direction) {
-    sustainLevel =
-        (float)(between(sustainLevel * 127 + direction, 0, 127)) / 127;
+    sustainLevel = pctAdd(sustainLevel, direction);
     env.release(sustainLevel);
+}
+
+void setFrequency(int8_t direction) {
+    frequency = between(frequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
+    waveform.frequency(frequency);
+}
+
+void setAmplitude(int8_t direction) {
+    amplitude = pctAdd(amplitude, direction);
+    waveform.amplitude(amplitude);
 }
 
 void audioInit() {
     AudioMemory(10);
-    waveform.frequency(440);
-    waveform.amplitude(1.0);
+    waveform.frequency(frequency);
+    waveform.amplitude(amplitude);
     waveform.arbitraryWaveform(arbitraryWaveform, 172.0);
     waveform.begin(WAVEFORM_SINE);
 

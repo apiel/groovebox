@@ -50,6 +50,10 @@ void controlChangeHandler(byte channel, byte control, byte value) {
 
     if (knob == 1) {
         setNextWaveform(direction);
+    } else if (knob == 2) {
+        setFrequency(direction);
+    } else if (knob == 3) {
+        setAmplitude(direction);
     } else if (knob == 5) {
         setAttack(direction);
     } else if (knob == 6) {
