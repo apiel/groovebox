@@ -9,16 +9,14 @@
 
 class IO_Audio {
    public:
-    AudioOutputMQS audioOut;
-    // IO_AudioSynth &synth;
     IO_AudioSynth synth;
     // Metro timerHold = Metro(150);
     // Metro timerNote = Metro(1000);
     // bool io_playing = true;
 
-    IO_Audio() : synth(&audioOut) { AudioMemory(10); }
-    // IO_Audio() : synth(10) { AudioMemory(10); }
-    // IO_Audio() { AudioMemory(10); }
+    IO_Audio(AudioStream* audioOut) : synth(audioOut) {
+        AudioMemory(10);
+    }
 
     void loop() {
         // if (io_playing && timerNote.check() == 1) {

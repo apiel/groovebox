@@ -11,6 +11,7 @@
 
 class IO_AudioSynth {
    protected:
+   public:
     AudioConnection patchCord01;
     AudioConnection patchCord02;
     AudioConnection patchCord03;
@@ -20,7 +21,6 @@ class IO_AudioSynth {
     AudioConnection patchCordFilterOutBandPass;
     AudioConnection patchCordFilterOutHighPass;
 
-   public:
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
     AudioSynthWaveformModulated lfoMod;
@@ -48,7 +48,6 @@ class IO_AudioSynth {
           patchCord02(dc, envMod),
           patchCord03(envMod, 0, waveform, 1),
           patchCord05(waveform, env),
-          //   patchCord06(env, filter) {
           patchCord06(env, filter),
           patchCordFilterOutLowPass(filter, 0, *audioDest, 0),
           patchCordFilterOutBandPass(filter, 1, *audioDest, 0),
