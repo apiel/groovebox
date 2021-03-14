@@ -7,6 +7,8 @@
 #include "io_audio.h"
 #include "io_midi_knob.h"
 
+IO_Audio * audio;
+
 USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
@@ -24,7 +26,7 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.println(velocity, DEC);
 
     if (note == 22) {
-        audioPlay(!audioIsPlaying());
+        audio->synth.noteOn();
     }
 }
 
@@ -35,6 +37,10 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.print(note, DEC);
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
+
+    if (note == 22) {
+        audio->synth.noteOff();
+    }
 }
 
 void controlChangeHandler(byte channel, byte control, byte value) {
@@ -49,23 +55,32 @@ void controlChangeHandler(byte channel, byte control, byte value) {
     int8_t direction = getKnobDirection(knob, value);
 
     if (knob == 1) {
-        setNextWaveform(direction);
+        audio->synth.setNextWaveform(direction);
     } else if (knob == 2) {
-        setFrequency(direction);
+        audio->synth.setFrequency(direction);
     } else if (knob == 3) {
-        setAmplitude(direction);
+        audio->synth.setAmplitude(direction);
     } else if (knob == 5) {
-        setAttack(direction);
+        audio->synth.setAttack(direction);
     } else if (knob == 6) {
-        setDecay(direction);
+        audio->synth.setDecay(direction);
     } else if (knob == 7) {
-        setSustain(direction);
+        audio->synth.setSustain(direction);
     } else if (knob == 8) {
-        setRelease(direction);
+        audio->synth.setRelease(direction);
+    } else if (knob == 11) {
+        audio->synth.setFilterFrequency(direction);
+    } else if (knob == 12) {
+        audio->synth.setFilterResonance(direction);
+    } else if (knob == 13) {
+        audio->synth.setFilterOctaveControl(direction);
+    } else if (knob == 14) {
+        audio->synth.setCurrentFilter(direction);
     }
 }
 
-void midiInit() {
+void midiInit(IO_Audio * ptIoAudio) {
+    audio = ptIoAudio;
     myusb.begin();
     midi1.setHandleNoteOn(noteOnHandler);
     midi1.setHandleNoteOff(noteOffHandler);

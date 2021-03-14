@@ -30,7 +30,7 @@ int8_t getKnobDirection(byte knob, byte val) {
     } else {
         direction = val - knobValues[knob];
         knobValues[knob] =
-            between(knobValues[knob] + direction, 0, KNOB_MAX_VALUE);
+            constrain(knobValues[knob] + direction, 0, KNOB_MAX_VALUE);
     }
     return direction;
 }
