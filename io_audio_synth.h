@@ -12,14 +12,15 @@
 class IO_AudioSynth {
    protected:
    public:
-    AudioConnection patchCord01;
-    AudioConnection patchCord02;
-    AudioConnection patchCord03;
-    AudioConnection patchCord05;
-    AudioConnection patchCord06;
-    AudioConnection patchCordFilterOutLowPass;
-    AudioConnection patchCordFilterOutBandPass;
-    AudioConnection patchCordFilterOutHighPass;
+    // AudioConnection patchCord01;
+    // AudioConnection patchCord02;
+    // AudioConnection patchCord03;
+    // AudioConnection patchCord05;
+    // AudioConnection patchCord06;
+    // AudioConnection patchCordFilterOutLowPass;
+    // AudioConnection patchCordFilterOutBandPass;
+    // AudioConnection patchCordFilterOutHighPass;
+    AudioConnection* patchCord[4];
 
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
@@ -43,15 +44,22 @@ class IO_AudioSynth {
     float filterResonance = 0.707;
     byte currentFilter = 0;
 
-    IO_AudioSynth(AudioStream* audioDest)
-        : patchCord01(lfoMod, waveform),
-          patchCord02(dc, envMod),
-          patchCord03(envMod, 0, waveform, 1),
-          patchCord05(waveform, env),
-          patchCord06(env, filter),
-          patchCordFilterOutLowPass(filter, 0, *audioDest, 0),
-          patchCordFilterOutBandPass(filter, 1, *audioDest, 0),
-          patchCordFilterOutHighPass(filter, 2, *audioDest, 0) {
+    // IO_AudioSynth(AudioStream* audioDest)
+    //     : patchCord01(lfoMod, waveform),
+    //       patchCord02(dc, envMod),
+    //       patchCord03(envMod, 0, waveform, 1),
+    //       patchCord05(waveform, env),
+    //       patchCord06(env, filter),
+    //       patchCordFilterOutLowPass(filter, 0, *audioDest, 0),
+    //       patchCordFilterOutBandPass(filter, 1, *audioDest, 0),
+    //       patchCordFilterOutHighPass(filter, 2, *audioDest, 0) {
+    IO_AudioSynth(AudioStream* audioDest) {
+        int pci = 0;  // used only for adding new patchcords
+        patchCord[pci++] = new AudioConnection(lfoMod, waveform);
+        patchCord[pci++] = new AudioConnection(dc, envMod);
+        patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
+        patchCord[pci++] = new AudioConnection(waveform, env);
+
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
         waveform.arbitraryWaveform(arbitraryWaveform, 172.0);
