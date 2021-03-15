@@ -14,7 +14,7 @@ class IO_Audio {
     // Metro timerNote = Metro(1000);
     // bool io_playing = true;
 
-    IO_Audio(AudioStream* audioOut) : synth(audioOut) {
+    IO_Audio() {
         AudioMemory(10);
     }
 

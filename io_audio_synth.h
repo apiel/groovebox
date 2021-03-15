@@ -39,7 +39,7 @@ class IO_AudioSynth : public AudioDumb {
     float filterResonance = 0.707;
     byte currentFilter = 0;
 
-    IO_AudioSynth(AudioStream* audioDest) {
+    IO_AudioSynth() {
         byte pci = 0;  // used only for adding new patchcords
         patchCord[pci++] = new AudioConnection(lfoMod, waveform);
         patchCord[pci++] = new AudioConnection(dc, envMod);
