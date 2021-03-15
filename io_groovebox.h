@@ -5,6 +5,7 @@
 
 #include "io_audio.h"
 #include "io_audio_synth.h"
+#include "io_display.h"
 #include "io_midi.h"
 
 IO_Audio ioAudio;
@@ -12,6 +13,7 @@ IO_Audio ioAudio;
 void ioGrooveboxInit() {
     Serial.println("grooveboxInit");
     midiInit(&ioAudio);
+    displayInit();
 }
 
 void ioGrooveboxLoop() {
