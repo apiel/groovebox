@@ -14,6 +14,7 @@ void ioGrooveboxInit() {
     Serial.println("grooveboxInit");
     midiInit(&ioAudio);
     displayInit();
+    displayUpdate();
 }
 
 void ioGrooveboxLoop() {

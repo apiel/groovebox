@@ -8,14 +8,17 @@
 #include <Wire.h>
 
 #include "io_audio.h"
-
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 64  // OLED display height, in pixels
+#include "io_display_synth.h"
+#include "io_display_util.h"
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET 4  // Reset pin # (or -1 if sharing Arduino reset pin)
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
+enum { VIEW_TONE, VIEW_PATTERN, VIEW_KEYBOARD, VIEW_COUNT };
+
+Adafruit_SSD1306 display(SCREEN_W, SCREEN_H, &Wire2, OLED_RESET);
+
+byte currentView = VIEW_TONE;
 
 void displayInit() {
     if (!display.begin(SSD1306_SWITCHCAPVCC,
@@ -31,6 +34,17 @@ void displayInit() {
     display.setCursor(0, 0);
 
     display.println("Init synth...");
+    display.display();
+}
+
+void displayUpdate() {
+    if (currentView == VIEW_KEYBOARD) {
+        // displayKeyboard();
+    } else if (currentView == VIEW_PATTERN) {
+        // displayPattern();
+    } else {
+        displaySynth(&display);
+    }
     display.display();
 }
 
