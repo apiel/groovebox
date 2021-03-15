@@ -5,23 +5,17 @@
 #include <Audio.h>
 
 #include "arbitraryWaveform.h"
-#include "io_util.h"
 #include "audio_dumb.h"
+#include "io_util.h"
 
 #define WAVEFORM_COUNT 9
+#define FILTER_TYPE_COUNT 3
 
-class IO_AudioSynth: public AudioDumb {
+class IO_AudioSynth : public AudioDumb {
    protected:
    public:
-    // AudioConnection patchCord01;
-    // AudioConnection patchCord02;
-    // AudioConnection patchCord03;
-    // AudioConnection patchCord05;
-    // AudioConnection patchCord06;
-    // AudioConnection patchCordFilterOutLowPass;
-    // AudioConnection patchCordFilterOutBandPass;
-    // AudioConnection patchCordFilterOutHighPass;
     AudioConnection* patchCord[5];
+    AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
 
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
@@ -45,22 +39,17 @@ class IO_AudioSynth: public AudioDumb {
     float filterResonance = 0.707;
     byte currentFilter = 0;
 
-    // IO_AudioSynth(AudioStream* audioDest)
-    //     : patchCord01(lfoMod, waveform),
-    //       patchCord02(dc, envMod),
-    //       patchCord03(envMod, 0, waveform, 1),
-    //       patchCord05(waveform, env),
-    //       patchCord06(env, filter),
-    //       patchCordFilterOutLowPass(filter, 0, *audioDest, 0),
-    //       patchCordFilterOutBandPass(filter, 1, *audioDest, 0),
-    //       patchCordFilterOutHighPass(filter, 2, *audioDest, 0) {
     IO_AudioSynth(AudioStream* audioDest) {
-        int pci = 0;  // used only for adding new patchcords
+        byte pci = 0;  // used only for adding new patchcords
         patchCord[pci++] = new AudioConnection(lfoMod, waveform);
         patchCord[pci++] = new AudioConnection(dc, envMod);
         patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
         patchCord[pci++] = new AudioConnection(waveform, env);
-        patchCord[pci++] = new AudioConnection(env, *this);
+        patchCord[pci++] = new AudioConnection(env, filter);
+        // patchCord[pci++] = new AudioConnection(env, *this);
+        patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
+        patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
+        patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
 
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
@@ -94,26 +83,11 @@ class IO_AudioSynth: public AudioDumb {
     }
 
     void setCurrentFilter(int8_t direction) {
-        currentFilter = mod(currentFilter + direction, 3);
-        // patchCordFilterOutLowPass.disconnect();
-        // patchCordFilterOutBandPass.disconnect();
-        // patchCordFilterOutHighPass.disconnect();
-        // switch (currentFilter) {
-        //     case 1:
-        //         // Serial.println("BandPass");
-        //         patchCordFilterOutBandPass.connect();
-        //         break;
-
-        //     case 2:
-        //         // Serial.println("HighPass");
-        //         patchCordFilterOutHighPass.connect();
-        //         break;
-
-        //     default:
-        //         // Serial.println("LowPass");
-        //         patchCordFilterOutLowPass.connect();
-        //         break;
-        // }
+        currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
+        patchCordFilter[0]->disconnect();
+        patchCordFilter[1]->disconnect();
+        patchCordFilter[2]->disconnect();
+        patchCordFilter[currentFilter]->connect();
     }
 
     void setFilterFrequency(int8_t direction) {
@@ -172,14 +146,12 @@ class IO_AudioSynth: public AudioDumb {
     }
 
     void noteOn() {
-        Serial.println("note on");
         envMod.noteOn();
         lfoMod.phaseModulation(0);
         env.noteOn();
     }
 
     void noteOff() {
-        Serial.println("note off");
         env.noteOff();
         envMod.noteOff();
     }
