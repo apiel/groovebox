@@ -6,10 +6,11 @@
 
 #include "arbitraryWaveform.h"
 #include "io_util.h"
+#include "audio_dumb.h"
 
 #define WAVEFORM_COUNT 9
 
-class IO_AudioSynth: public AudioEffectEnvelope {
+class IO_AudioSynth: public AudioDumb {
    protected:
    public:
     // AudioConnection patchCord01;
@@ -20,13 +21,13 @@ class IO_AudioSynth: public AudioEffectEnvelope {
     // AudioConnection patchCordFilterOutLowPass;
     // AudioConnection patchCordFilterOutBandPass;
     // AudioConnection patchCordFilterOutHighPass;
-    AudioConnection* patchCord[4];
+    AudioConnection* patchCord[5];
 
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
     AudioSynthWaveformModulated lfoMod;
     AudioSynthWaveformModulated waveform;
-    // AudioEffectEnvelope env;
+    AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
 
     byte currentWaveform = 0;
@@ -58,7 +59,8 @@ class IO_AudioSynth: public AudioEffectEnvelope {
         patchCord[pci++] = new AudioConnection(lfoMod, waveform);
         patchCord[pci++] = new AudioConnection(dc, envMod);
         patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
-        patchCord[pci++] = new AudioConnection(waveform, *this);
+        patchCord[pci++] = new AudioConnection(waveform, env);
+        patchCord[pci++] = new AudioConnection(env, *this);
 
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
@@ -70,12 +72,12 @@ class IO_AudioSynth: public AudioEffectEnvelope {
         lfoMod.amplitude(0.0);
         lfoMod.begin(WAVEFORM_SINE);
 
-        attack(attackMs);
-        decay(decayMs);
-        sustain(sustainLevel);
-        release(releaseMs);
-        hold(0);
-        delay(0);
+        env.attack(attackMs);
+        env.decay(decayMs);
+        env.sustain(sustainLevel);
+        env.release(releaseMs);
+        env.hold(0);
+        env.delay(0);
 
         dc.amplitude(0.5);
         envMod.delay(0);
@@ -140,22 +142,22 @@ class IO_AudioSynth: public AudioEffectEnvelope {
 
     void setAttack(int8_t direction) {
         attackMs = constrain(attackMs + direction, 0, 11880);
-        attack(attackMs);
+        env.attack(attackMs);
     }
 
     void setDecay(int8_t direction) {
         decayMs = constrain(decayMs + direction, 0, 11880);
-        decay(decayMs);
+        env.decay(decayMs);
     }
 
     void setRelease(int8_t direction) {
         releaseMs = constrain(releaseMs + direction, 0, 11880);
-        release(releaseMs);
+        env.release(releaseMs);
     }
 
     void setSustain(int8_t direction) {
         sustainLevel = pctAdd(sustainLevel, direction);
-        release(sustainLevel);
+        env.release(sustainLevel);
     }
 
     void setFrequency(int8_t direction) {
@@ -173,12 +175,12 @@ class IO_AudioSynth: public AudioEffectEnvelope {
         Serial.println("note on");
         envMod.noteOn();
         lfoMod.phaseModulation(0);
-        AudioEffectEnvelope::noteOn();
+        env.noteOn();
     }
 
     void noteOff() {
         Serial.println("note off");
-        AudioEffectEnvelope::noteOff();
+        env.noteOff();
         envMod.noteOff();
     }
 };
