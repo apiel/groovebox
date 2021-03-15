@@ -7,15 +7,21 @@
 
 #include "io_audio_synth.h"
 
+AudioOutputMQS audioOut;
+
 class IO_Audio {
    public:
     IO_AudioSynth synth;
+    AudioConnection* patchCord[1];
     // Metro timerHold = Metro(150);
     // Metro timerNote = Metro(1000);
     // bool io_playing = true;
 
     IO_Audio() {
         AudioMemory(10);
+
+        byte pci = 0;  // used only for adding new patchcords
+        patchCord[pci++] = new AudioConnection(synth, audioOut);
     }
 
     void loop() {
