@@ -8,17 +8,16 @@
 #include <Wire.h>
 
 #include "io_audio.h"
+#include "io_display_keyboard.h"
+#include "io_display_pattern.h"
 #include "io_display_synth.h"
 #include "io_display_util.h"
+#include "io_state.h"
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET 4  // Reset pin # (or -1 if sharing Arduino reset pin)
 
-enum { VIEW_TONE, VIEW_PATTERN, VIEW_KEYBOARD, VIEW_COUNT };
-
 Adafruit_SSD1306 display(SCREEN_W, SCREEN_H, &Wire2, OLED_RESET);
-
-byte currentView = VIEW_TONE;
 
 void displayInit() {
     if (!display.begin(SSD1306_SWITCHCAPVCC,
@@ -39,9 +38,9 @@ void displayInit() {
 
 void displayUpdate() {
     if (currentView == VIEW_KEYBOARD) {
-        // displayKeyboard();
+        displayKeyboard(&display);
     } else if (currentView == VIEW_PATTERN) {
-        // displayPattern();
+        displayPattern(&display);
     } else {
         displaySynth(&display);
     }

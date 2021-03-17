@@ -5,14 +5,19 @@
 #include <USBHost_t36.h>
 
 #include "io_audio.h"
+#include "io_midi_default.h"
 #include "io_midi_knob.h"
+#include "io_midi_synth.h"
 
-IO_Audio * audio;
+IO_Audio* audio;
 
 USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
+USBHub hub3(myusb);
 MIDIDevice midi1(myusb);
+MIDIDevice midi2(myusb);
+// might need to had more, maybe even crate an array
 
 void noteOnHandler(byte channel, byte note, byte velocity) {
     // When a USB device with multiple virtual cables is used,
@@ -24,9 +29,12 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.print(note, DEC);
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
-
-    if (note == 22) {
-        audio->synth.noteOn();
+    if (channel == 1) {
+        midi1.sendNoteOn(note, velocity, 2);
+        midi2.sendNoteOn(note, velocity, 2);
+    } else if (!defaultNoteOnHandler(channel, note, velocity)) {
+        synthNoteOnHandler(audio, channel, note, velocity);
+        displayUpdate();
     }
 }
 
@@ -38,8 +46,12 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    if (note == 22) {
-        audio->synth.noteOff();
+    if (channel == 1) {
+        midi1.sendNoteOff(note, velocity, 2);
+        midi2.sendNoteOff(note, velocity, 2);
+    } else {
+        synthNoteOffHandler(audio, channel, note, velocity);
+        displayUpdate();
     }
 }
 
@@ -53,38 +65,48 @@ void controlChangeHandler(byte channel, byte control, byte value) {
 
     byte knob = control % KNOB_COUNT;
     int8_t direction = getKnobDirection(knob, value);
-
-    if (knob == 1) {
-        audio->synth.setNextWaveform(direction);
-    } else if (knob == 2) {
-        audio->synth.setFrequency(direction);
-    } else if (knob == 3) {
-        audio->synth.setAmplitude(direction);
-    } else if (knob == 5) {
-        audio->synth.setAttack(direction);
-    } else if (knob == 6) {
-        audio->synth.setDecay(direction);
-    } else if (knob == 7) {
-        audio->synth.setSustain(direction);
-    } else if (knob == 8) {
-        audio->synth.setRelease(direction);
-    } else if (knob == 11) {
-        audio->synth.setFilterFrequency(direction);
-    } else if (knob == 12) {
-        audio->synth.setFilterResonance(direction);
-    } else if (knob == 13) {
-        audio->synth.setFilterOctaveControl(direction);
-    } else if (knob == 14) {
-        audio->synth.setCurrentFilter(direction);
-    }
+    synthControlChangeHandler(audio, channel, knob, direction);
+    displayUpdate();
 }
 
-void midiInit(IO_Audio * ptIoAudio) {
+void afterTouchPolyHandler(uint8_t channel, uint8_t note, uint8_t pressure) {
+    Serial.print("AfterTouchPoly, ch=");
+    Serial.print(channel, DEC);
+    Serial.print(", note=");
+    Serial.print(note, DEC);
+    Serial.print(", pressure=");
+    Serial.println(pressure, DEC);
+}
+
+void sysExHandler(const uint8_t* data, uint16_t length, bool complete) {
+    Serial.println("some sysExHandler data");
+    // Serial.println(data);
+}
+
+void midiInit(IO_Audio* ptIoAudio) {
     audio = ptIoAudio;
     myusb.begin();
     midi1.setHandleNoteOn(noteOnHandler);
     midi1.setHandleNoteOff(noteOffHandler);
     midi1.setHandleControlChange(controlChangeHandler);
+    midi1.setHandleAfterTouchPoly(afterTouchPolyHandler);
+    midi1.setHandleSysEx(sysExHandler);
+    // Serial.print("Midi1 channel: ");
+    // Serial.println(midi1.getChannel());
+
+    // if (midi1.manufacturer() != NULL && midi1.product() != NULL) {
+    //     String make = (char*)midi1.manufacturer();
+    //     String model = (char*)midi1.product();
+    //     Serial.print(String(make) + " " + model + " ");
+    // }
+
+    midi2.setHandleNoteOn(noteOnHandler);
+    midi2.setHandleNoteOff(noteOffHandler);
+    midi2.setHandleControlChange(controlChangeHandler);
+    midi2.setHandleAfterTouchPoly(afterTouchPolyHandler);
+    midi2.setHandleSysEx(sysExHandler);
+    // Serial.print("Midi2 channel: ");
+    // Serial.println(midi2.getChannel());
 
     // midi1.setHandleClock(myClock);
     // midi1.setHandleStart(myStart);
@@ -95,6 +117,7 @@ void midiInit(IO_Audio * ptIoAudio) {
 void midiLoop() {
     myusb.Task();
     midi1.read();
+    midi2.read();
 }
 
 #endif

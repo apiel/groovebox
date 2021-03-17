@@ -12,6 +12,7 @@ IO_Audio ioAudio;
 
 void ioGrooveboxInit() {
     Serial.println("grooveboxInit");
+    // delay(2000);
     midiInit(&ioAudio);
     displayInit();
     displayUpdate();
