@@ -1,14 +1,14 @@
 #ifndef IO_DISPLAY_SYNTH_H_
 #define IO_DISPLAY_SYNTH_H_
 
-#include <Fonts/Picopixel.h>
 #include <Adafruit_SSD1306.h>
 
 #include "io_display.h"
 #include "io_display_util.h"
 
 // char buf[SCREEN_W];
-// void dprintxyAbs(Adafruit_SSD1306 * d, byte x, byte y, const char *str, ...) {
+// void dprintxyAbs(Adafruit_SSD1306 * d, byte x, byte y, const char *str, ...)
+// {
 //     d->setCursor(x, y);
 //     va_list argptr;
 //     va_start(argptr, str);
@@ -17,16 +17,15 @@
 //     d->print(buf);
 // }
 
-void diplayToneType(Adafruit_SSD1306 * d, byte yAbsPos) {
-    d->setFont(&Picopixel);
-
+void diplayToneType(Adafruit_SSD1306* d, byte yAbsPos) {
+    setSmallFont(d);
     // dprintxyAbs(52, yAbsPos, "Synth %d", tone->id);
     dprintxyAbs(d, 52, yAbsPos, "Synth %d", 0);
-    
+
     d->drawLine(0, yAbsPos, 40, yAbsPos, WHITE);
     d->drawLine(88, yAbsPos, 128, yAbsPos, WHITE);
 
-    d->setFont();
+    resetFont(d);
 }
 
 // void displayToneSettings(byte yPos) {
@@ -61,13 +60,15 @@ void diplayToneType(Adafruit_SSD1306 * d, byte yAbsPos) {
 //         dprintxyAbs(10 * 6, yAbsPos, "S %d", tone->envlop.getTime(1));
 
 //         dprintxyAbs(0, yAbsPos + 8, "R %d", tone->envlop.getTime(2));
-//         dprintxyAbs(10 * 6, yAbsPos + 8, "Level %d", tone->envlop.getLevel(0));
+//         dprintxyAbs(10 * 6, yAbsPos + 8, "Level %d",
+//         tone->envlop.getLevel(0));
 //     } else {
 //         // here we might want to use pct?
 //         dprintxyAbs(0, yAbsPos, "A %d", tone->envlop.getTime(0));
 
 //         dprintxyAbs(0, yAbsPos + 8, "R %d", tone->envlop.getTime(2));
-//         dprintxyAbs(10 * 6, yAbsPos + 8, "Level %d", tone->envlop.getLevel(0));
+//         dprintxyAbs(10 * 6, yAbsPos + 8, "Level %d",
+//         tone->envlop.getLevel(0));
 //     }
 // }
 
@@ -120,7 +121,7 @@ void diplayToneType(Adafruit_SSD1306 * d, byte yAbsPos) {
 //     }
 // }
 
-void displaySynth(Adafruit_SSD1306 * d) {
+void displaySynth(Adafruit_SSD1306* d) {
     d->clearDisplay();
     d->setCursor(0, 0);
 

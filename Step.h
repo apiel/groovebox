@@ -9,7 +9,7 @@ class Step {
    public:
     byte note = BASE_FREQ;
     byte duration = 0;
-    // byte velocity;
+    byte velocity = 100;
     bool slide = false;
     int freqDiff = 0;
 
@@ -27,9 +27,14 @@ class Step {
         set(_note);
     }
 
-    void set(byte _note, byte _duration, bool _slide) {
-        slide = _slide;
+    void set(byte _note, byte _duration, byte _velocity) {
+        velocity = _velocity;
         set(_note, _duration);
+    }
+
+    void set(byte _note, byte _duration, byte _velocity, bool _slide) {
+        slide = _slide;
+        set(_note, _duration, _velocity);
     }
 
     // Step(byte _note, byte _duration, bool _slide) {

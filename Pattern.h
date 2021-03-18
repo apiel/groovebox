@@ -23,12 +23,13 @@ class Pattern {
         return this;
     }
 
-    Pattern* add(byte pos, byte note, byte duration) {
-        return add(pos, note, duration, false);
+    Pattern* add(byte pos, byte note, byte duration, byte velocity) {
+        return add(pos, note, duration, velocity, false);
     }
 
-    Pattern* add(byte pos, byte note, byte duration, bool slide) {
-        steps[pos].set(note, duration, slide);
+    Pattern* add(byte pos, byte note, byte duration, byte velocity,
+                 bool slide) {
+        steps[pos].set(note, duration, velocity, slide);
         return this;
     }
 
