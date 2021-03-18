@@ -13,6 +13,13 @@ class Pattern {
 
     Pattern() { setDefaultName(); }
 
+    Pattern* set(Pattern* p) {
+        setName(p->name);
+        for (byte pos = 0; pos < MAX_STEPS_IN_PATTERN; pos++) {
+            steps[pos].set(&p->steps[pos]);
+        }
+    }
+
     Pattern* setDefaultName() {
         setName("New Pattern");
         return this;

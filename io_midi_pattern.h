@@ -7,7 +7,9 @@
 
 void patternNoteOnHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
-        if (note == 23 || note == 47) {
+        if (note == 22 || note == 46) {
+            setSequence();
+        } else if (note == 23 || note == 47) {
             savePattern();
         }
     }

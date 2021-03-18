@@ -4,6 +4,7 @@
 #include <SD.h>
 
 #include "Pattern.h"
+#include "io_sequence.h"
 #include "io_state.h"
 #include "io_storage.h"
 #include "note.h"
@@ -40,8 +41,10 @@ void loadPattern() {
     // pattern.print();
 }
 
-void patternInit() {
-    loadPattern();
+void patternInit() { loadPattern(); }
+
+void setSequence() {
+    sequences[currentSequence].set(&pattern, sequenceOutput);
 }
 
 void setCurrentPattern(int8_t direction) {

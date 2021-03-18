@@ -17,6 +17,10 @@ class Step {
 
     void clear() { duration = 0; }
 
+    void set(Step* step) {
+        set(step->note, step->duration, step->velocity, step->slide);
+    }
+
     void set(byte _note) {
         note = _note;
         freqDiff = NOTE_FREQ[BASE_FREQ] - NOTE_FREQ[note];

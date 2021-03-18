@@ -7,9 +7,10 @@
 #include "io_config.h"
 #include "io_display_util.h"
 #include "io_pattern.h"
+#include "io_sequence.h"
 
 void displayStep(Adafruit_SSD1306* d, Pattern* pPattern, byte pos) {
-    byte topMargin = 20;
+    byte topMargin = 18;
     byte x = pos % 8;
     byte y = pos / 8 + 1;
 
@@ -51,6 +52,8 @@ void displayPattern(Adafruit_SSD1306* d) {
         displayStep(d, &pattern, pos);
     }
     resetFont(d);
+
+    dprintxy(d, 0, 7, "Pos: %d Out: %d", currentSequence, sequenceOutput);
 }
 
 #endif

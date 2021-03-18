@@ -1,3 +1,10 @@
+# keyboard
+
+- select input and output
+    - input is midi channel of keyboard
+    - output can be midi channel or internal instrument: synth, sample, ...
+- save setting in a file
+
 # Pattern
 
 - edit name
