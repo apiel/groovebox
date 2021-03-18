@@ -3,22 +3,21 @@
 
 #include <Arduino.h>
 
-enum { VIEW_TONE, VIEW_PATTERN, VIEW_KEYBOARD, VIEW_COUNT };
+#include "io_util.h"
 
-byte currentView = VIEW_TONE;
+enum { VIEW_SYNTH, VIEW_PATTERN, VIEW_KEYBOARD, VIEW_COUNT };
+
+byte currentView = VIEW_SYNTH;
 bool mcMode = false;
+bool sdAvailable = true;
 
-void toggleGcMode() {
-        mcMode = !mcMode;
-}
+void toggleGcMode() { mcMode = !mcMode; }
 
 // ToDo: when button pressed, possibilty to press 1-8 button to directly
 // select the view. Also while it is pressed the 1-8 button should light up
 // to display the current selection
 void setCurrentView(int8_t direction) {
     currentView = mod(currentView + direction, VIEW_COUNT);
-    Serial.print("setCurrentView=");
-    Serial.println(currentView);
 }
 
 #endif

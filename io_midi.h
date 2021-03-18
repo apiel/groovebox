@@ -5,8 +5,10 @@
 #include <USBHost_t36.h>
 
 #include "io_audio.h"
+#include "io_display.h"
 #include "io_midi_default.h"
 #include "io_midi_knob.h"
+#include "io_midi_pattern.h"
 #include "io_midi_synth.h"
 
 IO_Audio* audio;
@@ -33,7 +35,12 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
         midi1.sendNoteOn(note, velocity, 2);
         midi2.sendNoteOn(note, velocity, 2);
     } else if (!defaultNoteOnHandler(channel, note, velocity)) {
-        synthNoteOnHandler(audio, channel, note, velocity);
+        if (currentView == VIEW_PATTERN) {
+            patternNoteOnHandler(channel, note, velocity);
+        } else if (currentView == VIEW_SYNTH) {
+            synthNoteOnHandler(audio, channel, note, velocity);
+        }
+
         displayUpdate();
     }
 }
@@ -50,7 +57,11 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
         midi1.sendNoteOff(note, velocity, 2);
         midi2.sendNoteOff(note, velocity, 2);
     } else {
-        synthNoteOffHandler(audio, channel, note, velocity);
+        if (currentView == VIEW_PATTERN) {
+            patternNoteOffHandler(channel, note, velocity);
+        } else if (currentView == VIEW_SYNTH) {
+            synthNoteOffHandler(audio, channel, note, velocity);
+        }
         displayUpdate();
     }
 }
@@ -65,7 +76,11 @@ void controlChangeHandler(byte channel, byte control, byte value) {
 
     byte knob = control % KNOB_COUNT;
     int8_t direction = getKnobDirection(knob, value);
-    synthControlChangeHandler(audio, channel, knob, direction);
+    if (currentView == VIEW_PATTERN) {
+        patternControlChangeHandler(channel, knob, direction);
+    } else if (currentView == VIEW_SYNTH) {
+        synthControlChangeHandler(audio, channel, knob, direction);
+    }
     displayUpdate();
 }
 
