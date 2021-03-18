@@ -5,20 +5,20 @@
 
 #include "io_pattern.h"
 
-void patternNoteOnHandler(byte channel, byte note,
-                        byte velocity) {
+void patternNoteOnHandler(byte channel, byte note, byte velocity) {
+    if (channel == 11) {
+        if (note == 23 || note == 47) {
+            savePattern();
+        }
+    }
+}
+
+void patternNoteOffHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
     }
 }
 
-void patternNoteOffHandler(byte channel, byte note,
-                         byte velocity) {
-    if (channel == 11) {
-    }
-}
-
-void patternControlChangeHandler(byte channel, byte knob,
-                               int8_t direction) {
+void patternControlChangeHandler(byte channel, byte knob, int8_t direction) {
     if (channel == 11) {
         if (knob == 1) {
             setCurrentPattern(direction);

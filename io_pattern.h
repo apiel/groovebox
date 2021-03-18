@@ -64,4 +64,28 @@ void setStepVelocity(int8_t direction) {
     pStep->set(constrain(pStep->velocity + direction, 0, 127));
 }
 
+bool savePattern() {
+    if (sdAvailable) {
+        snprintf(patternPath, PATTERN_PATH_LEN, "parttern/%03d.io",
+                 currentPattern);
+        File file = SD.open(patternPath, FILE_WRITE);
+
+        if (file) {
+            sprintf(storageBuffer, "%s\n", pattern.name);
+            file.print(storageBuffer);
+            for (byte pos = 0; pos < MAX_STEPS_IN_PATTERN; pos++) {
+                Step* step = &pattern.steps[pos];
+                sprintf(storageBuffer, "%d %d %d %d %d\n", (int)pos,
+                        (int)step->note, (int)step->duration,
+                        (int)step->velocity, step->slide ? 1 : 0);
+                file.print(storageBuffer);
+            }
+            file.close();
+            return true;
+        }
+    }
+    Serial.println("- failed to open file for writing");
+    return false;
+}
+
 #endif
