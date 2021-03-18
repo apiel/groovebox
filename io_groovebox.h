@@ -9,6 +9,7 @@
 #include "io_config.h"
 #include "io_display.h"
 #include "io_midi.h"
+#include "io_pattern.h"
 #include "io_state.h"
 
 IO_Audio ioAudio;
@@ -16,13 +17,14 @@ IO_Audio ioAudio;
 void ioGrooveboxInit() {
     Serial.println("grooveboxInit");
     displayInit();
-    // delay(2000);
-    midiInit(&ioAudio);
-
     if (!(SD.begin(SDCARD_CS_PIN))) {
         Serial.println("Unable to access the SD card");
         sdAvailable = false;
     }
+
+    // delay(2000);
+    midiInit(&ioAudio);
+    patternInit();
 
     displayUpdate();
 }

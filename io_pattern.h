@@ -20,6 +20,7 @@ void loadPattern() {
     pattern.clear();
 
     snprintf(patternPath, PATTERN_PATH_LEN, "parttern/%03d.io", currentPattern);
+    // Serial.printf("pattern file: %s\n", patternPath);
     if (sdAvailable && SD.exists(patternPath)) {
         File file = SD.open(patternPath);
         if (file) {
@@ -34,8 +35,13 @@ void loadPattern() {
             return;
         }
     }
+    // Serial.println("No file found.");
     pattern.setDefaultName();
     // pattern.print();
+}
+
+void patternInit() {
+    loadPattern();
 }
 
 void setCurrentPattern(int8_t direction) {

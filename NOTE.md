@@ -1,3 +1,13 @@
+# Pattern
+
+- edit name
+- save
+    - should edit be directly reflected
+        - should we save as soon we change something
+        - there could be an auto save? and in that case it is reflected...
+    - when we change of pattern, should it ask for save
+- assign pattern to output
+
 # Links
 
 - Multiple DAC & ADC
