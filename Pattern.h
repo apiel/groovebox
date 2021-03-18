@@ -14,11 +14,11 @@ class Pattern {
     Pattern() { setDefaultName(); }
 
     Pattern* setDefaultName() {
-        setName((char*)"New Pattern");
+        setName("New Pattern");
         return this;
     }
 
-    Pattern* setName(char* ptrName) {
+    Pattern* setName(const char* ptrName) {
         snprintf(name, PATTERN_NAME_SIZE, "%s", ptrName);
         return this;
     }

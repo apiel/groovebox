@@ -4,13 +4,13 @@
 #include <Adafruit_SSD1306.h>
 
 #include "io_display_util.h"
-#include "io_state_pattern.h"
+#include "io_pattern.h"
 
 void displayPattern(Adafruit_SSD1306 * d) {
     d->clearDisplay();
     d->setCursor(0, 0);
 
-    dprintln(d, "%03d Pattern", currentPattern);
+    dprintln(d, "%03d %s", currentPattern, pattern.name);
 }
 
 #endif

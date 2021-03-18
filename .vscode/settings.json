@@ -28,7 +28,8 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "cstdarg": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "sstream": "cpp"
     },
     "emeraldwalk.runonsave": {
         "commands": [

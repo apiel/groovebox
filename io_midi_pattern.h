@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include "io_state_pattern.h"
+#include "io_pattern.h"
 
 void patternNoteOnHandler(byte channel, byte note,
                         byte velocity) {
