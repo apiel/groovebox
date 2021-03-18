@@ -22,6 +22,14 @@ void patternControlChangeHandler(byte channel, byte knob,
     if (channel == 11) {
         if (knob == 1) {
             setCurrentPattern(direction);
+        } else if (knob == 2) {
+            setCurrentStepSelection(direction);
+        } else if (knob == 3) {
+            setStepDuration(direction);
+        } else if (knob == 4) {
+            setStepNote(direction);
+        } else if (knob == 5) {
+            setStepVelocity(direction);
         }
     }
 }
