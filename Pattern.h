@@ -18,6 +18,7 @@ class Pattern {
         for (byte pos = 0; pos < MAX_STEPS_IN_PATTERN; pos++) {
             steps[pos].set(&p->steps[pos]);
         }
+        return this;
     }
 
     Pattern* setDefaultName() {

@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "io_pattern.h"
+#include "io_sequence.h"
 
 void patternNoteOnHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
@@ -32,6 +33,10 @@ void patternControlChangeHandler(byte channel, byte knob, int8_t direction) {
             setStepNote(direction);
         } else if (knob == 5) {
             setStepVelocity(direction);
+        } else if (knob == 7) {
+            setCurrentSequence(direction);
+        } else if (knob == 8) {
+            setSequenceOutput(direction);
         }
     }
 }
