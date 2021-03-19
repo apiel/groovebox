@@ -5,6 +5,7 @@
 
 class Sequence {
    public:
+    bool active = false;
     byte output;
     Pattern pattern;
 
@@ -17,10 +18,6 @@ class Sequence {
         pattern.set(p);
 
         return this;
-    }
-
-    bool isPlaying() {
-        return true;
     }
 };
 
