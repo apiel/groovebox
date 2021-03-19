@@ -32,6 +32,8 @@ void displaySequences(Adafruit_SSD1306* d) {
         }
     }
     resetFont(d);
+
+    d->fillRect(SCREEN_W - 2, currentSeqRow * 16, 2, 16, WHITE);
 }
 
 #endif

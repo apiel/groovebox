@@ -19,6 +19,11 @@ class Sequence {
 
         return this;
     }
+
+    Sequence* toggle() {
+        active = !active;
+        return this;
+    }
 };
 
 #endif

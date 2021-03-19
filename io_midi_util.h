@@ -1,5 +1,5 @@
-#ifndef IO_MIDI_KNOB_H_
-#define IO_MIDI_KNOB_H_
+#ifndef IO_MIDI_UTIL_H_
+#define IO_MIDI_UTIL_H_
 
 #include <Arduino.h>
 
@@ -33,6 +33,25 @@ int8_t getKnobDirection(byte knob, byte val) {
             constrain(knobValues[knob] + direction, 0, KNOB_MAX_VALUE);
     }
     return direction;
+}
+
+byte getItemKeyA(byte key) {
+    if (key >= 8 && key <= 15) {
+        return key - 8;
+    }
+    return 255;
+}
+byte getItemKeyB(byte key) {
+    if (key >= 32 && key <= 39) {
+        return key - 32;
+    }
+    return 255;
+}
+byte getItemKey(byte key) {
+    if (getItemKeyA(key) < 255) {
+        return getItemKeyA(key);
+    }
+    return getItemKeyB(key);
 }
 
 #endif
