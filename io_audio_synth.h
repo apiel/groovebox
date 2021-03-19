@@ -84,6 +84,8 @@ class IO_AudioSynth : public AudioDumb {
 
     void setCurrentFilter(int8_t direction) {
         currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
+        // might not need to diconnect, as only the last connected is the one used
+        // see https://www.pjrc.com/teensy/td_libs_AudioConnection.html
         patchCordFilter[0]->disconnect();
         patchCordFilter[1]->disconnect();
         patchCordFilter[2]->disconnect();

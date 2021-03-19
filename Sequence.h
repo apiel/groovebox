@@ -18,6 +18,10 @@ class Sequence {
 
         return this;
     }
+
+    bool isPlaying() {
+        return true;
+    }
 };
 
 #endif

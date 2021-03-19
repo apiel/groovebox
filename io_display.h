@@ -10,6 +10,7 @@
 #include "io_audio.h"
 #include "io_display_keyboard.h"
 #include "io_display_pattern.h"
+#include "io_display_sequences.h"
 #include "io_display_synth.h"
 #include "io_display_util.h"
 #include "io_state.h"
@@ -41,6 +42,8 @@ void displayUpdate() {
         displayKeyboard(&display);
     } else if (currentView == VIEW_PATTERN) {
         displayPattern(&display);
+    } else if (currentView == VIEW_SEQUENCES) {
+        displaySequences(&display);
     } else {
         displaySynth(&display);
     }

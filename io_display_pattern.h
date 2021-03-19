@@ -2,7 +2,6 @@
 #define IO_DISPLAY_PATTERN_H_
 
 #include <Adafruit_SSD1306.h>
-// #include <Fonts/Picopixel.h>
 
 #include "io_config.h"
 #include "io_display_util.h"
@@ -53,7 +52,7 @@ void displayPattern(Adafruit_SSD1306* d) {
     }
     resetFont(d);
 
-    dprintxy(d, 0, 7, "Pos: %d Out: %d", currentSequence, sequenceOutput);
+    dprintxy(d, 0, 7, "Pos: %d Out: %d", currentSequence + 1, sequenceOutput);
 }
 
 #endif

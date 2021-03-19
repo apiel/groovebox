@@ -5,7 +5,7 @@
 #include "Sequence.h"
 #include "io_util.h"
 
-#define SEQUENCE_COUNT 16
+#define SEQUENCE_COUNT 32
 #define SEQUENCE_OUTPUT_COUNT 16 // + SYNTH_COUNT + ...
 
 Sequence sequences[SEQUENCE_COUNT];

@@ -5,7 +5,7 @@
 
 #include "io_util.h"
 
-enum { VIEW_SYNTH, VIEW_PATTERN, VIEW_KEYBOARD, VIEW_COUNT };
+enum { VIEW_SYNTH, VIEW_PATTERN, VIEW_SEQUENCES, VIEW_KEYBOARD, VIEW_COUNT };
 
 byte currentView = VIEW_SYNTH;
 bool mcMode = false;
