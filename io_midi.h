@@ -7,6 +7,7 @@
 #include "io_display.h"
 #include "io_midi_core.h"
 #include "io_midi_default.h"
+#include "io_midi_main.h"
 #include "io_midi_pattern.h"
 #include "io_midi_sequences.h"
 #include "io_midi_synth.h"
@@ -31,6 +32,8 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
             synthNoteOnHandler(channel, note, velocity);
         } else if (currentView == VIEW_SEQUENCES) {
             sequencesNoteOnHandler(channel, note, velocity);
+        } else if (currentView == VIEW_MAIN) {
+            mainNoteOnHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -53,6 +56,8 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
             synthNoteOffHandler(channel, note, velocity);
         } else if (currentView == VIEW_SEQUENCES) {
             sequencesNoteOffHandler(channel, note, velocity);
+        } else if (currentView == VIEW_MAIN) {
+            mainNoteOffHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -74,6 +79,8 @@ void controlChangeHandler(byte channel, byte control, byte value) {
         synthControlChangeHandler(channel, knob, direction);
     } else if (currentView == VIEW_SEQUENCES) {
         sequencesControlChangeHandler(channel, knob, direction);
+    } else if (currentView == VIEW_MAIN) {
+        mainControlChangeHandler(channel, knob, direction);
     }
     displayUpdate();
 }
