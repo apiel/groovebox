@@ -7,22 +7,22 @@
 #include "io_audio.h"
 #include "io_display.h"
 #include "io_midi_default.h"
-#include "io_midi_util.h"
 #include "io_midi_pattern.h"
 #include "io_midi_sequences.h"
 #include "io_midi_synth.h"
+#include "io_midi_util.h"
+
+#define MIDI_COUNT 4
 
 USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
 USBHub hub3(myusb);
-MIDIDevice midi1(myusb);
-MIDIDevice midi2(myusb);
-// might need to had more, maybe even crate an array
+MIDIDevice midi[MIDI_COUNT] = MIDIDevice(myusb);
 
 void noteOnHandler(byte channel, byte note, byte velocity) {
     // When a USB device with multiple virtual cables is used,
-    // midi1.getCable() can be used to read which of the virtual
+    // midi[n].getCable() can be used to read which of the virtual
     // MIDI cables received this message.
     Serial.print("Note On, ch=");
     Serial.print(channel, DEC);
@@ -31,8 +31,9 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
     if (channel == 1) {
-        midi1.sendNoteOn(note, velocity, 2);
-        midi2.sendNoteOn(note, velocity, 2);
+        for (byte n = 0; n < MIDI_COUNT; n++) {
+            midi[n].sendNoteOn(note, velocity, 2);
+        }
     } else if (!defaultNoteOnHandler(channel, note, velocity)) {
         if (currentView == VIEW_PATTERN) {
             patternNoteOnHandler(channel, note, velocity);
@@ -55,8 +56,9 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.println(velocity, DEC);
 
     if (channel == 1) {
-        midi1.sendNoteOff(note, velocity, 2);
-        midi2.sendNoteOff(note, velocity, 2);
+        for (byte n = 0; n < MIDI_COUNT; n++) {
+            midi[n].sendNoteOff(note, velocity, 2);
+        }
     } else {
         if (currentView == VIEW_PATTERN) {
             patternNoteOffHandler(channel, note, velocity);
@@ -105,38 +107,26 @@ void sysExHandler(const uint8_t* data, uint16_t length, bool complete) {
 
 void midiInit() {
     myusb.begin();
-    midi1.setHandleNoteOn(noteOnHandler);
-    midi1.setHandleNoteOff(noteOffHandler);
-    midi1.setHandleControlChange(controlChangeHandler);
-    midi1.setHandleAfterTouchPoly(afterTouchPolyHandler);
-    midi1.setHandleSysEx(sysExHandler);
-    // Serial.print("Midi1 channel: ");
-    // Serial.println(midi1.getChannel());
+    for (byte n = 0; n < MIDI_COUNT; n++) {
+        midi[n].setHandleNoteOn(noteOnHandler);
+        midi[n].setHandleNoteOff(noteOffHandler);
+        midi[n].setHandleControlChange(controlChangeHandler);
+        midi[n].setHandleAfterTouchPoly(afterTouchPolyHandler);
+        midi[n].setHandleSysEx(sysExHandler);
 
-    // if (midi1.manufacturer() != NULL && midi1.product() != NULL) {
-    //     String make = (char*)midi1.manufacturer();
-    //     String model = (char*)midi1.product();
-    //     Serial.print(String(make) + " " + model + " ");
-    // }
-
-    midi2.setHandleNoteOn(noteOnHandler);
-    midi2.setHandleNoteOff(noteOffHandler);
-    midi2.setHandleControlChange(controlChangeHandler);
-    midi2.setHandleAfterTouchPoly(afterTouchPolyHandler);
-    midi2.setHandleSysEx(sysExHandler);
-    // Serial.print("Midi2 channel: ");
-    // Serial.println(midi2.getChannel());
-
-    // midi1.setHandleClock(myClock);
-    // midi1.setHandleStart(myStart);
-    // midi1.setHandleContinue(myContinue);
-    // midi1.setHandleStop(myStop);
+        // if (midi[n].manufacturer() != NULL && midi[n].product() != NULL) {
+        //     String make = (char*)midi[n].manufacturer();
+        //     String model = (char*)midi[n].product();
+        //     Serial.print(String(make) + " " + model + " ");
+        // }
+    }
 }
 
 void midiLoop() {
     myusb.Task();
-    midi1.read();
-    midi2.read();
+    for (byte n = 0; n < MIDI_COUNT; n++) {
+        midi[n].read();
+    }
 }
 
 #endif

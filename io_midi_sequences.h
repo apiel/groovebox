@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#include "io_midi_util.h"
 #include "io_sequence.h"
 
 void sequencesNoteOnHandler(byte channel, byte note, byte velocity) {
