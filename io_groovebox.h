@@ -10,9 +10,8 @@
 #include "io_display.h"
 #include "io_midi.h"
 #include "io_pattern.h"
+#include "io_sequence.h"
 #include "io_state.h"
-
-IO_Audio ioAudio;
 
 void ioGrooveboxInit() {
     Serial.println("grooveboxInit");
@@ -23,15 +22,17 @@ void ioGrooveboxInit() {
     }
 
     // delay(2000);
-    midiInit(&ioAudio);
+    audioInit();
+    midiInit();
     patternInit();
+    sequencerInit();
 
     displayUpdate();
 }
 
 void ioGrooveboxLoop() {
     midiLoop();
-    ioAudio.loop();
+    sequencerLoop();
 }
 
 #endif

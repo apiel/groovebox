@@ -12,8 +12,6 @@
 #include "io_midi_sequences.h"
 #include "io_midi_synth.h"
 
-IO_Audio* audio;
-
 USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
@@ -39,7 +37,7 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
         if (currentView == VIEW_PATTERN) {
             patternNoteOnHandler(channel, note, velocity);
         } else if (currentView == VIEW_SYNTH) {
-            synthNoteOnHandler(audio, channel, note, velocity);
+            synthNoteOnHandler(channel, note, velocity);
         } else if (currentView == VIEW_SEQUENCES) {
             sequencesNoteOnHandler(channel, note, velocity);
         }
@@ -63,7 +61,7 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
         if (currentView == VIEW_PATTERN) {
             patternNoteOffHandler(channel, note, velocity);
         } else if (currentView == VIEW_SYNTH) {
-            synthNoteOffHandler(audio, channel, note, velocity);
+            synthNoteOffHandler(channel, note, velocity);
         } else if (currentView == VIEW_SEQUENCES) {
             sequencesNoteOffHandler(channel, note, velocity);
         }
@@ -84,7 +82,7 @@ void controlChangeHandler(byte channel, byte control, byte value) {
     if (currentView == VIEW_PATTERN) {
         patternControlChangeHandler(channel, knob, direction);
     } else if (currentView == VIEW_SYNTH) {
-        synthControlChangeHandler(audio, channel, knob, direction);
+        synthControlChangeHandler(channel, knob, direction);
     } else if (currentView == VIEW_SEQUENCES) {
         sequencesControlChangeHandler(channel, knob, direction);
     }
@@ -105,8 +103,7 @@ void sysExHandler(const uint8_t* data, uint16_t length, bool complete) {
     // Serial.println(data);
 }
 
-void midiInit(IO_Audio* ptIoAudio) {
-    audio = ptIoAudio;
+void midiInit() {
     myusb.begin();
     midi1.setHandleNoteOn(noteOnHandler);
     midi1.setHandleNoteOff(noteOffHandler);

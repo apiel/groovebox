@@ -5,49 +5,46 @@
 
 #include "io_audio.h"
 
-void synthNoteOnHandler(IO_Audio* audio, byte channel, byte note,
-                        byte velocity) {
+void synthNoteOnHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
         if (note == 22) {
-            audio->synth.noteOn();
+            synth[currentSynth].noteOn();
         }
     }
 }
 
-void synthNoteOffHandler(IO_Audio* audio, byte channel, byte note,
-                         byte velocity) {
+void synthNoteOffHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
         if (note == 22) {
-            audio->synth.noteOff();
+            synth[currentSynth].noteOff();
         }
     }
 }
 
-void synthControlChangeHandler(IO_Audio* audio, byte channel, byte knob,
-                               int8_t direction) {
+void synthControlChangeHandler(byte channel, byte knob, int8_t direction) {
     if (channel == 11) {
         if (knob == 1) {
-            audio->synth.setNextWaveform(direction);
+            synth[currentSynth].setNextWaveform(direction);
         } else if (knob == 2) {
-            audio->synth.setFrequency(direction);
+            synth[currentSynth].setFrequency(direction);
         } else if (knob == 3) {
-            audio->synth.setAmplitude(direction);
+            synth[currentSynth].setAmplitude(direction);
         } else if (knob == 5) {
-            audio->synth.setAttack(direction);
+            synth[currentSynth].setAttack(direction);
         } else if (knob == 6) {
-            audio->synth.setDecay(direction);
+            synth[currentSynth].setDecay(direction);
         } else if (knob == 7) {
-            audio->synth.setSustain(direction);
+            synth[currentSynth].setSustain(direction);
         } else if (knob == 8) {
-            audio->synth.setRelease(direction);
+            synth[currentSynth].setRelease(direction);
         } else if (knob == 11) {
-            audio->synth.setFilterFrequency(direction);
+            synth[currentSynth].setFilterFrequency(direction);
         } else if (knob == 12) {
-            audio->synth.setFilterResonance(direction);
+            synth[currentSynth].setFilterResonance(direction);
         } else if (knob == 13) {
-            audio->synth.setFilterOctaveControl(direction);
+            synth[currentSynth].setFilterOctaveControl(direction);
         } else if (knob == 14) {
-            audio->synth.setCurrentFilter(direction);
+            synth[currentSynth].setCurrentFilter(direction);
         }
     }
 }
