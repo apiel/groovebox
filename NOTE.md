@@ -5,6 +5,10 @@
     - output can be midi channel or internal instrument: synth, sample, ...
 - save setting in a file
 
+# midi
+
+- send midi clock
+
 # chaining
 
 # sequence live edit

@@ -2,35 +2,15 @@
 #define IO_MIDI_H_
 
 #include <Arduino.h>
-#include <USBHost_t36.h>
 
 #include "io_audio.h"
 #include "io_display.h"
+#include "io_midi_core.h"
 #include "io_midi_default.h"
 #include "io_midi_pattern.h"
 #include "io_midi_sequences.h"
 #include "io_midi_synth.h"
 #include "io_midi_util.h"
-
-#define MIDI_COUNT 4
-
-USBHost myusb;
-USBHub hub1(myusb);
-USBHub hub2(myusb);
-USBHub hub3(myusb);
-MIDIDevice midi[MIDI_COUNT] = MIDIDevice(myusb);
-
-void noteOn(byte channel, byte note, byte velocity) {
-    for (byte n = 0; n < MIDI_COUNT; n++) {
-        midi[n].sendNoteOn(note, velocity, channel);
-    }
-}
-
-void noteOff(byte channel, byte note, byte velocity) {
-    for (byte n = 0; n < MIDI_COUNT; n++) {
-        midi[n].sendNoteOff(note, velocity, channel);
-    }
-}
 
 void noteOnHandler(byte channel, byte note, byte velocity) {
     // When a USB device with multiple virtual cables is used,
@@ -121,6 +101,8 @@ void midiInit() {
         midi[n].setHandleAfterTouchPoly(afterTouchPolyHandler);
         midi[n].setHandleSysEx(sysExHandler);
 
+        // Serial.print("midi ");
+        // Serial.print(midi[n].idProduct());
         // if (midi[n].manufacturer() != NULL && midi[n].product() != NULL) {
         //     String make = (char*)midi[n].manufacturer();
         //     String model = (char*)midi[n].product();
@@ -132,7 +114,8 @@ void midiInit() {
 void midiLoop() {
     myusb.Task();
     for (byte n = 0; n < MIDI_COUNT; n++) {
-        midi[n].read();
+        while (midi[n].read())
+            ;
     }
 }
 

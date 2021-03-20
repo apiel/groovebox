@@ -6,7 +6,7 @@
 
 #include "Pattern.h"
 #include "Sequence.h"
-// #include "io_midi.h"
+#include "io_midi_core.h"
 #include "io_sequence.h"
 #include "io_util.h"
 
@@ -31,9 +31,9 @@ void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
     // "off", output, note, velocity);
     if (output > 0 && output <= 16) {
         if (type == SEQ_NOTE_ON) {
-            // noteOn(output, note, velocity);
+            noteOn(output, note, velocity);
         } else {
-            // noteOff(output, note, velocity);
+            noteOff(output, note, velocity);
         }
     }
 }

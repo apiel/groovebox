@@ -27,14 +27,15 @@ void loadPattern() {
         if (file) {
             String name = file.readStringUntil('\n');
             pattern.setName(name.c_str());
-            pattern.stepCount = 0;
+            // pattern.stepCount = 0;
             while (file.available() && assignStorageValues(&file)) {
                 pattern.add((byte)storageValues[0], (byte)storageValues[1],
                             (byte)storageValues[2], (byte)storageValues[3],
                             storageValues[4] == 1);
                 // maybe it would be better to read the step count from a var in
                 // the file
-                pattern.stepCount++;
+                // pattern.stepCount =
+                //     constrain(pattern.stepCount + 1, 0, MAX_STEPS_IN_PATTERN);
             }
             file.close();
             return;
@@ -79,11 +80,14 @@ bool savePattern() {
     if (sdAvailable) {
         snprintf(patternPath, PATTERN_PATH_LEN, "parttern/%03d.io",
                  currentPattern);
+        // SD.remove(patternPath);
         File file = SD.open(patternPath, FILE_WRITE);
 
         if (file) {
+            file.seek(0);
             sprintf(storageBuffer, "%s\n", pattern.name);
             file.print(storageBuffer);
+            // Serial.printf("Save pattern %s with %d steps\n", patternPath, pattern.stepCount);
             for (byte pos = 0; pos < pattern.stepCount; pos++) {
                 Step* step = &pattern.steps[pos];
                 sprintf(storageBuffer, "%d %d %d %d %d\n", (int)pos,

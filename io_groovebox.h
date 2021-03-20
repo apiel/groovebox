@@ -14,8 +14,13 @@
 #include "io_state.h"
 
 void ioGrooveboxInit() {
+    // // to comment out
+    // while (!Serial)
+    //     ;
+
     Serial.println("grooveboxInit");
     displayInit();
+
     if (!(SD.begin(SDCARD_CS_PIN))) {
         Serial.println("Unable to access the SD card");
         sdAvailable = false;
