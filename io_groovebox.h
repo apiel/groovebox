@@ -10,7 +10,7 @@
 #include "io_display.h"
 #include "io_midi.h"
 #include "io_pattern.h"
-#include "io_sequence.h"
+#include "io_sequencer.h"
 #include "io_state.h"
 
 void ioGrooveboxInit() {

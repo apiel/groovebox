@@ -20,6 +20,18 @@ USBHub hub2(myusb);
 USBHub hub3(myusb);
 MIDIDevice midi[MIDI_COUNT] = MIDIDevice(myusb);
 
+void noteOn(byte channel, byte note, byte velocity) {
+    for (byte n = 0; n < MIDI_COUNT; n++) {
+        midi[n].sendNoteOn(note, velocity, channel);
+    }
+}
+
+void noteOff(byte channel, byte note, byte velocity) {
+    for (byte n = 0; n < MIDI_COUNT; n++) {
+        midi[n].sendNoteOff(note, velocity, channel);
+    }
+}
+
 void noteOnHandler(byte channel, byte note, byte velocity) {
     // When a USB device with multiple virtual cables is used,
     // midi[n].getCable() can be used to read which of the virtual
@@ -31,9 +43,7 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
     if (channel == 1) {
-        for (byte n = 0; n < MIDI_COUNT; n++) {
-            midi[n].sendNoteOn(note, velocity, 2);
-        }
+        noteOn(2, note, velocity);
     } else if (!defaultNoteOnHandler(channel, note, velocity)) {
         if (currentView == VIEW_PATTERN) {
             patternNoteOnHandler(channel, note, velocity);
@@ -42,7 +52,6 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
         } else if (currentView == VIEW_SEQUENCES) {
             sequencesNoteOnHandler(channel, note, velocity);
         }
-
         displayUpdate();
     }
 }
@@ -56,9 +65,7 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.println(velocity, DEC);
 
     if (channel == 1) {
-        for (byte n = 0; n < MIDI_COUNT; n++) {
-            midi[n].sendNoteOff(note, velocity, 2);
-        }
+        noteOff(2, note, velocity);
     } else {
         if (currentView == VIEW_PATTERN) {
             patternNoteOffHandler(channel, note, velocity);

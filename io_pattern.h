@@ -4,7 +4,7 @@
 #include <SD.h>
 
 #include "Pattern.h"
-#include "io_sequence.h"
+#include "io_sequencer.h"
 #include "io_state.h"
 #include "io_storage.h"
 #include "note.h"
