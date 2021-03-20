@@ -16,8 +16,8 @@ void noteOn(byte channel, byte note, byte velocity) {
     for (byte n = 0; n < MIDI_COUNT; n++) {
         if (midi[n].idProduct()) {
             midi[n].sendNoteOn(note, velocity, channel);
-            
-            Serial.println("noteon" + String(n) + " " + String(note) + " " + String(velocity) + " " + String(channel));
+            // Serial.println("noteon" + String(n) + " " + String(note) + " " +
+            // String(velocity) + " " + String(channel));
         }
     }
 }
@@ -26,8 +26,8 @@ void noteOff(byte channel, byte note, byte velocity) {
     for (byte n = 0; n < MIDI_COUNT; n++) {
         if (midi[n].idProduct()) {
             midi[n].sendNoteOff(note, velocity, channel);
-            
-            Serial.println("noteoff" + String(n) + " " + String(note) + " " + String(velocity) + " " + String(channel));
+            // Serial.println("noteoff" + String(n) + " " + String(note) + " " +
+            // String(velocity) + " " + String(channel));
         }
     }
 }
