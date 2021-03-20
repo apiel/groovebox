@@ -5,8 +5,13 @@
     - output can be midi channel or internal instrument: synth, sample, ...
 - save setting in a file
 
+# chaining
+
+# sequence live edit
+
 # Pattern
 
+- edit slide
 - edit name
 - save
     - should edit be directly reflected

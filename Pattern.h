@@ -3,17 +3,19 @@
 
 #include "Step.h"
 
-#define MAX_STEPS_IN_PATTERN 64
+#define MAX_STEPS_IN_PATTERN 32
 #define PATTERN_NAME_SIZE 15
 
 class Pattern {
    public:
+    byte stepCount = MAX_STEPS_IN_PATTERN;
     char name[PATTERN_NAME_SIZE];
     Step steps[MAX_STEPS_IN_PATTERN];
 
     Pattern() { setDefaultName(); }
 
     Pattern* set(Pattern* p) {
+        stepCount = p->stepCount;
         setName(p->name);
         for (byte pos = 0; pos < MAX_STEPS_IN_PATTERN; pos++) {
             steps[pos].set(&p->steps[pos]);
@@ -37,13 +39,15 @@ class Pattern {
 
     Pattern* add(byte pos, byte note, byte duration, byte velocity,
                  bool slide) {
-        steps[pos].set(note, duration, velocity, slide);
+        if (pos < MAX_STEPS_IN_PATTERN) {
+            steps[pos].set(note, duration, velocity, slide);
+        }
         return this;
     }
 
     // for testing
     void print() {
-        for (byte x = 0; x < MAX_STEPS_IN_PATTERN; x++) {
+        for (byte x = 0; x < stepCount; x++) {
             Serial.print("[");
             Serial.print(x);
             Serial.print(", ");
@@ -71,7 +75,7 @@ class Pattern {
     }
 
     Pattern* repeat(byte pos, byte len) {
-        return repeat(pos, len, (byte)MAX_STEPS_IN_PATTERN / len);
+        return repeat(pos, len, (byte)stepCount / len);
     }
 
     Pattern* repeat(byte pos, byte len, byte count) {

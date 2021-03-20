@@ -27,10 +27,14 @@ void loadPattern() {
         if (file) {
             String name = file.readStringUntil('\n');
             pattern.setName(name.c_str());
+            pattern.stepCount = 0;
             while (file.available() && assignStorageValues(&file)) {
                 pattern.add((byte)storageValues[0], (byte)storageValues[1],
                             (byte)storageValues[2], (byte)storageValues[3],
                             storageValues[4] == 1);
+                // maybe it would be better to read the step count from a var in
+                // the file
+                pattern.stepCount++;
             }
             file.close();
             return;
@@ -43,9 +47,7 @@ void loadPattern() {
 
 void patternInit() { loadPattern(); }
 
-void setSequence() {
-    sequences[currentSequence].set(&pattern, sequenceOutput);
-}
+void setSequence() { sequences[currentSequence].set(&pattern, sequenceOutput); }
 
 void setCurrentPattern(int8_t direction) {
     currentPattern += direction;
@@ -82,7 +84,7 @@ bool savePattern() {
         if (file) {
             sprintf(storageBuffer, "%s\n", pattern.name);
             file.print(storageBuffer);
-            for (byte pos = 0; pos < MAX_STEPS_IN_PATTERN; pos++) {
+            for (byte pos = 0; pos < pattern.stepCount; pos++) {
                 Step* step = &pattern.steps[pos];
                 sprintf(storageBuffer, "%d %d %d %d %d\n", (int)pos,
                         (int)step->note, (int)step->duration,

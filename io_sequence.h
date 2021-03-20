@@ -1,6 +1,7 @@
 #ifndef IO_SEQUENCE_H_
 #define IO_SEQUENCE_H_
 
+#include <Arduino.h>
 #include <Metro.h>
 
 #include "Pattern.h"
@@ -42,12 +43,22 @@ void setSequenceRow(int8_t direction) {
     currentSeqRow = mod(currentSeqRow + direction, SEQUENCE_ROW_COUNT);
 }
 
-void sequencerInit() { setTempo(0); }
+void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
+    Serial.printf("seq next: %s %d %d %d\n", type == SEQ_NOTE_ON ? "on" : "off",
+                  output, note, velocity);
+}
+
+void sequencerInit() {
+    setTempo(0);
+    for (byte pos = 0; pos < SEQUENCE_COUNT; pos++) {
+        sequences[pos].setNextHandler(sequencerNextHandler);
+    }
+}
 
 void sequencerLoop() {
     if (timer.check() == 1) {
         timer.reset();
-        for(byte pos = 0; pos < SEQUENCE_COUNT; pos++) {
+        for (byte pos = 0; pos < SEQUENCE_COUNT; pos++) {
             sequences[pos].next();
         }
     }

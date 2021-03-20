@@ -22,11 +22,13 @@ void displaySequences(Adafruit_SSD1306* d) {
     for (byte y = 0; y < SCREEN_H; y += 16) {
         for (byte x = 0; x < SCREEN_W; x += 16) {
             dprintxyAbs(d, x + 2, y + 6, "%02d", pos + 1);
-            if (sequences[pos].active) {
-                d->fillTriangle(x + 4, y + 8, x + 10, y + 11, x + 4, y + 14,
-                                WHITE);
-            } else {
-                d->fillRect(x + 4, y + 8, 5, 5, WHITE);
+            if (sequences[pos].output) {
+                if (sequences[pos].active) {
+                    d->fillTriangle(x + 4, y + 8, x + 10, y + 11, x + 4, y + 14,
+                                    WHITE);
+                } else {
+                    d->fillRect(x + 4, y + 8, 5, 5, WHITE);
+                }
             }
             pos++;
         }
