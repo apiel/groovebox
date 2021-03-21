@@ -48,7 +48,10 @@ void loadPattern() {
 
 void patternInit() { loadPattern(); }
 
-void setSequence() { sequences[currentSequence].set(&pattern, sequenceOutput); }
+void setSequence(bool start = false) { 
+    sequences[currentSequence].set(&pattern, sequenceOutput); 
+    sequences[currentSequence].activate(start);
+}
 
 void setCurrentPattern(int8_t direction) {
     currentPattern += direction;

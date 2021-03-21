@@ -61,6 +61,11 @@ class Sequence {
         return this;
     }
 
+    Sequence* activate(bool value = true) {
+        active = value;
+        return this;
+    }
+
     Sequence* setNextHandler(void (*fptr)(byte type, byte output, byte note,
                                           byte velocity)) {
         handleNext = fptr;
