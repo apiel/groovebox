@@ -9,6 +9,7 @@
 #include "io_midi_default.h"
 #include "io_midi_main.h"
 #include "io_midi_pattern.h"
+#include "io_midi_router.h"
 #include "io_midi_sequences.h"
 #include "io_midi_synth.h"
 #include "io_midi_util.h"
@@ -34,6 +35,8 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
             sequencesNoteOnHandler(channel, note, velocity);
         } else if (currentView == VIEW_MAIN) {
             mainNoteOnHandler(channel, note, velocity);
+        } else if (currentView == VIEW_ROUTER) {
+            routerNoteOnHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -58,6 +61,8 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
             sequencesNoteOffHandler(channel, note, velocity);
         } else if (currentView == VIEW_MAIN) {
             mainNoteOffHandler(channel, note, velocity);
+        } else if (currentView == VIEW_ROUTER) {
+            routerNoteOffHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -81,6 +86,8 @@ void controlChangeHandler(byte channel, byte control, byte value) {
         sequencesControlChangeHandler(channel, knob, direction);
     } else if (currentView == VIEW_MAIN) {
         mainControlChangeHandler(channel, knob, direction);
+    } else if (currentView == VIEW_ROUTER) {
+        routerControlChangeHandler(channel, knob, direction);
     }
     displayUpdate();
 }

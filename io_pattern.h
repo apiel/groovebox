@@ -17,10 +17,15 @@ char patternPath[PATTERN_PATH_LEN];
 byte currentPattern = 0;
 byte currentStepSelection = 0;
 
+void setPatternPath() {
+    snprintf(patternPath, PATTERN_PATH_LEN, "pattern/%03d.io", currentPattern);
+    Serial.println(patternPath);
+}
+
 void loadPattern() {
     pattern.clear();
-
-    snprintf(patternPath, PATTERN_PATH_LEN, "parttern/%03d.io", currentPattern);
+    Serial.println("loadPattern.");
+    setPatternPath();
     // Serial.printf("pattern file: %s\n", patternPath);
     if (sdAvailable && SD.exists(patternPath)) {
         File file = SD.open(patternPath);
@@ -35,21 +40,22 @@ void loadPattern() {
                 // maybe it would be better to read the step count from a var in
                 // the file
                 // pattern.stepCount =
-                //     constrain(pattern.stepCount + 1, 0, MAX_STEPS_IN_PATTERN);
+                //     constrain(pattern.stepCount + 1, 0,
+                //     MAX_STEPS_IN_PATTERN);
             }
             file.close();
             return;
         }
     }
-    // Serial.println("No file found.");
+    Serial.println("No file found.");
     pattern.setDefaultName();
     // pattern.print();
 }
 
 void patternInit() { loadPattern(); }
 
-void setSequence(bool start = false) { 
-    sequences[currentSequence].set(&pattern, sequenceOutput); 
+void setSequence(bool start = false) {
+    sequences[currentSequence].set(&pattern, sequenceOutput);
     sequences[currentSequence].activate(start);
 }
 
@@ -80,9 +86,9 @@ void setStepVelocity(int8_t direction) {
 }
 
 bool savePattern() {
+    Serial.println("savePattern");
     if (sdAvailable) {
-        snprintf(patternPath, PATTERN_PATH_LEN, "parttern/%03d.io",
-                 currentPattern);
+        setPatternPath();
         // SD.remove(patternPath);
         File file = SD.open(patternPath, FILE_WRITE);
 
@@ -90,7 +96,8 @@ bool savePattern() {
             file.seek(0);
             sprintf(storageBuffer, "%s\n", pattern.name);
             file.print(storageBuffer);
-            // Serial.printf("Save pattern %s with %d steps\n", patternPath, pattern.stepCount);
+            // Serial.printf("Save pattern %s with %d steps\n", patternPath,
+            // pattern.stepCount);
             for (byte pos = 0; pos < pattern.stepCount; pos++) {
                 Step* step = &pattern.steps[pos];
                 sprintf(storageBuffer, "%d %d %d %d %d\n", (int)pos,

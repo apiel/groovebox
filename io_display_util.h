@@ -31,20 +31,4 @@ void dprintxy(Adafruit_SSD1306 *d, byte x, byte y, const char *str, ...) {
     d->print(buf);
 }
 
-void dprint(Adafruit_SSD1306 *d, const char *str, ...) {
-    va_list argptr;
-    va_start(argptr, str);
-    vsnprintf(buf, SCREEN_W, str, argptr);
-    va_end(argptr);
-    d->print(buf);
-}
-
-void dprintln(Adafruit_SSD1306 *d, const char *str, ...) {
-    va_list argptr;
-    va_start(argptr, str);
-    vsnprintf(buf, SCREEN_W, str, argptr);
-    va_end(argptr);
-    d->println(buf);
-}
-
 #endif

@@ -19,7 +19,7 @@ void displayStep(Adafruit_SSD1306* d, Pattern* pPattern, byte pos) {
                 y * 7 + 7 + topMargin, WHITE);
     if (step->duration) {
         d->setCursor(x * 16 + 2, y * 7 + 5 + topMargin);
-        dprint(d, "%s%d", getNoteDot(step->note), getNoteOctave(step->note));
+        d->printf("%s%d", getNoteDot(step->note), getNoteOctave(step->note));
 
         // this show the duration but will be buggy when note go on the next
         // line need to think about a solution
@@ -40,10 +40,10 @@ void displayPattern(Adafruit_SSD1306* d) {
     d->clearDisplay();
     d->setCursor(0, 0);
 
-    dprintln(d, "%03d %s", currentPattern, pattern.name);
+    d->printf("%03d %s\n", currentPattern, pattern.name);
 
     Step* step = &pattern.steps[currentStepSelection];
-    dprintln(d, "\nD: %d V: %03d S: %d", step->duration, step->velocity,
+    d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
              step->slide ? 1 : 0);
 
     setSmallFont(d);

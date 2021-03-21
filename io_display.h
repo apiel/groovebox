@@ -8,7 +8,7 @@
 #include <Wire.h>
 
 #include "io_audio.h"
-#include "io_display_keyboard.h"
+#include "io_display_router.h"
 #include "io_display_main.h"
 #include "io_display_pattern.h"
 #include "io_display_sequences.h"
@@ -39,8 +39,8 @@ void displayInit() {
 }
 
 void displayUpdate() {
-    if (currentView == VIEW_KEYBOARD) {
-        displayKeyboard(&display);
+    if (currentView == VIEW_ROUTER) {
+        displayRouter(&display);
     } else if (currentView == VIEW_PATTERN) {
         displayPattern(&display);
     } else if (currentView == VIEW_SEQUENCES) {
