@@ -7,7 +7,7 @@
 
 void synthNoteOnHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
-        if (note == 22) {
+        if (note == 22 || note == 46) {
             synth[currentSynth].noteOn();
         }
     }
@@ -15,7 +15,7 @@ void synthNoteOnHandler(byte channel, byte note, byte velocity) {
 
 void synthNoteOffHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
-        if (note == 22) {
+        if (note == 22 || note == 46) {
             synth[currentSynth].noteOff();
         }
     }

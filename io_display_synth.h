@@ -21,11 +21,11 @@ const char* getWave(byte w) {
         case 5:
             return "Pulse";
         case 6:
-            return "Sawtooth reverse";
+            return "Saw reverse";
         case 7:
             return "Sample hold";
         case 8:
-            return "Triangle cariable";
+            return "Triangle var";
     }
     return "unknown";
 }
@@ -46,10 +46,10 @@ void displaySynth(Adafruit_SSD1306* d) {
     d->clearDisplay();
     d->setCursor(0, 0);
 
-    d->printf("%d| %.1fHz %d%%\n", currentSynth, synth[currentSynth].frequency,
-              (int)(synth[currentSynth].amplitude * 100));
+    d->printf("%d| %s\n", currentSynth, getWave(synth[currentSynth].currentWaveform));
 
-    d->printf("%s\n", getWave(synth[currentSynth].currentWaveform));
+    d->printf("%.1fHz %d%%\n", synth[currentSynth].frequency,
+              (int)(synth[currentSynth].amplitude * 100));
 
     d->printf("ADSR %d|%d|%d%%|%d\n", (int)synth[currentSynth].attackMs,
               (int)synth[currentSynth].decayMs,

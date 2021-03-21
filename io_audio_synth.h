@@ -56,17 +56,17 @@ class IO_AudioSynth : public AudioDumb {
         waveform.arbitraryWaveform(arbitraryWaveform, 172.0);
         waveform.begin(WAVEFORM_SINE);
 
-        lfoMod.frequency(1.0);
-        // lfoMod.amplitude(0.5);
-        lfoMod.amplitude(0.0);
-        lfoMod.begin(WAVEFORM_SINE);
-
         env.attack(attackMs);
         env.decay(decayMs);
         env.sustain(sustainLevel);
         env.release(releaseMs);
         env.hold(0);
         env.delay(0);
+
+        lfoMod.frequency(1.0);
+        // lfoMod.amplitude(0.5);
+        lfoMod.amplitude(0.0);
+        lfoMod.begin(WAVEFORM_SINE);
 
         dc.amplitude(0.5);
         envMod.delay(0);
@@ -84,8 +84,8 @@ class IO_AudioSynth : public AudioDumb {
 
     void setCurrentFilter(int8_t direction) {
         currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
-        // might not need to diconnect, as only the last connected is the one used
-        // see https://www.pjrc.com/teensy/td_libs_AudioConnection.html
+        // might not need to diconnect, as only the last connected is the one
+        // used see https://www.pjrc.com/teensy/td_libs_AudioConnection.html
         patchCordFilter[0]->disconnect();
         patchCordFilter[1]->disconnect();
         patchCordFilter[2]->disconnect();
