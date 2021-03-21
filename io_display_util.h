@@ -13,6 +13,10 @@ char buf[SCREEN_W];
 void setSmallFont(Adafruit_SSD1306 *d) { d->setFont(&Picopixel); }
 void resetFont(Adafruit_SSD1306 *d) { d->setFont(); }
 
+void addToCursor(Adafruit_SSD1306 *d, int8_t x, int8_t y) {
+    d->setCursor(d->getCursorX() + x, d->getCursorY() + y);
+}
+
 void dprintxyAbs(Adafruit_SSD1306 *d, byte x, byte y, const char *str, ...) {
     d->setCursor(x, y);
     va_list argptr;
