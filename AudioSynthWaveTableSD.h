@@ -51,14 +51,7 @@ class AudioSynthWaveTableSD : public AudioStream {
             if (phase_accumulator > size) {
                 phase_accumulator = 0;
             }
-            // block->data[i] = data[phase_accumulator];
-            // Serial.println("-");
-            // Serial.println(block->data[i]);
-            // Serial.println(magnitude);
-            // Serial.println((int16_t)(data[phase_accumulator] * magnitude));
             block->data[i] = (int16_t)(data[phase_accumulator] * magnitude);
-            // block->data[i] =
-            //     multiply_32x32_rshift32(data[phase_accumulator], magnitude);
         }
 
         transmit(block);
