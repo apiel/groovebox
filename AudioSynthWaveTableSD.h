@@ -34,7 +34,7 @@ class AudioSynthWaveTableSD : public AudioStream {
         } else if (n > 1.0) {
             n = 1.0;
         }
-        magnitude = n * 65536.0;
+        magnitude = n;
     }
 
     void update(void) {
@@ -42,12 +42,23 @@ class AudioSynthWaveTableSD : public AudioStream {
 
         if (block == NULL) return;
 
+        if (magnitude == 0.0)
+            return;  // but here we might still want to increase the
+                     // phase_accumulator
+
         for (unsigned int i = 0; i < AUDIO_BLOCK_SAMPLES; i++) {
             phase_accumulator++;
             if (phase_accumulator > size) {
                 phase_accumulator = 0;
             }
-            block->data[i] = data[phase_accumulator];
+            // block->data[i] = data[phase_accumulator];
+            // Serial.println("-");
+            // Serial.println(block->data[i]);
+            // Serial.println(magnitude);
+            // Serial.println((int16_t)(data[phase_accumulator] * magnitude));
+            block->data[i] = (int16_t)(data[phase_accumulator] * magnitude);
+            // block->data[i] =
+            //     multiply_32x32_rshift32(data[phase_accumulator], magnitude);
         }
 
         transmit(block);
@@ -78,12 +89,6 @@ class AudioSynthWaveTableSD : public AudioStream {
     //     }
     //     bp = block->data;
 
-    //     // if (!arbdata) {
-    //     //     release(block);
-    //     //     phase_accumulator += inc * AUDIO_BLOCK_SAMPLES;
-    //     //     return;
-    //     // }
-    //     // // len = 256
     //     for (i = 0; i < AUDIO_BLOCK_SAMPLES; i++) {
     //         index = ph >> 24;
     //         index2 = index + 1;
@@ -132,7 +137,7 @@ class AudioSynthWaveTableSD : public AudioStream {
     uint32_t phase_offset;
     uint32_t phase_accumulator;
     uint32_t phase_increment;
-    int32_t magnitude;
+    float magnitude;
     int16_t data[MAX_TABLE_SIZE];
 
     uint32_t size;

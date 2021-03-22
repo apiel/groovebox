@@ -61,13 +61,14 @@ class IO_AudioSynth : public AudioDumb {
         // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
         // patchCord[pci++] = new AudioConnection(waveform, env);
 
-        patchCord[pci++] = new AudioConnection(waveTable, env);
+        // patchCord[pci++] = new AudioConnection(waveTable, env);
+        patchCord[pci++] = new AudioConnection(waveTable, *this);
 
-        patchCord[pci++] = new AudioConnection(env, filter);
-        // patchCord[pci++] = new AudioConnection(env, *this);
-        patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
-        patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
-        patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
+        // patchCord[pci++] = new AudioConnection(env, filter);
+        // // patchCord[pci++] = new AudioConnection(env, *this);
+        // patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
+        // patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
+        // patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
 
         // patchCord[pci++] = new AudioConnection(raw, *this);
 
@@ -101,6 +102,8 @@ class IO_AudioSynth : public AudioDumb {
         filter.octaveControl(filterOctaveControl);
 
         waveTable.load("raw/kick.raw");
+        waveTable.amplitude(amplitude);
+        waveTable.frequency(frequency);
     }
 
     void setCurrentFilter(int8_t direction) {
@@ -186,6 +189,7 @@ class IO_AudioSynth : public AudioDumb {
     void setAmplitude(int8_t direction) {
         amplitude = pctAdd(amplitude, direction);
         waveform.amplitude(amplitude);
+        waveTable.amplitude(amplitude);
     }
 
     void noteOn() {
