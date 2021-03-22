@@ -24,6 +24,15 @@
     - when we change of pattern, should it ask for save
 - assign pattern to output
 
+# synth
+
+- need to fix patch modulation
+- should it be modular, maybe not really just to be able to activate deactivate module or choose
+    - choose modulation: lfo, env, or custom modulation?
+    - waveform, mutliple wave form, wavetable, sample
+    - choose filter: env, pass filter, custom ?
+- give possibility to deactivate envelop and have a continous sound... 
+
 # Links
 
 - Multiple DAC & ADC

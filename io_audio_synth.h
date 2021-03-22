@@ -52,6 +52,8 @@ class IO_AudioSynth : public AudioDumb {
         byte pci = 0;  // used only for adding new patchcords
         patchCord[pci++] = new AudioConnection(lfoMod, waveform);
         patchCord[pci++] = new AudioConnection(dc, envMod);
+        // this is wrong should be patchCord[pci++] = new AudioConnection(envMod, waveform);
+        // and then have a way to select like for pass filter
         patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
         patchCord[pci++] = new AudioConnection(waveform, env);
         patchCord[pci++] = new AudioConnection(env, filter);
