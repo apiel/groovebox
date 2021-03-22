@@ -24,7 +24,7 @@ class IO_AudioSynth : public AudioDumb {
     AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
 
-    byte currentWaveform = 0;
+    byte currentWaveform = WAVEFORM_SINE;
 
     float attackMs = 0;
     float decayMs = 50;
@@ -38,6 +38,15 @@ class IO_AudioSynth : public AudioDumb {
     float filterOctaveControl = 1.0;
     float filterResonance = 0.707;
     byte currentFilter = 0;
+
+    float modAttackMs = 0;
+    float modDecayMs = 50;
+    float modSustainLevel = 0;
+    float modReleaseMs = 0;
+
+    float lfoFrequency = 1.0;
+    float lfoAmplitude = 0.0;
+    byte lfoWave = WAVEFORM_SINE;
 
     IO_AudioSynth() {
         byte pci = 0;  // used only for adding new patchcords
@@ -54,7 +63,7 @@ class IO_AudioSynth : public AudioDumb {
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
         waveform.arbitraryWaveform(arbitraryWaveform, 172.0);
-        waveform.begin(WAVEFORM_SINE);
+        waveform.begin(currentWaveform);
 
         env.attack(attackMs);
         env.decay(decayMs);
@@ -63,18 +72,17 @@ class IO_AudioSynth : public AudioDumb {
         env.hold(0);
         env.delay(0);
 
-        lfoMod.frequency(1.0);
-        // lfoMod.amplitude(0.5);
-        lfoMod.amplitude(0.0);
-        lfoMod.begin(WAVEFORM_SINE);
+        lfoMod.frequency(lfoFrequency);
+        lfoMod.amplitude(lfoAmplitude);
+        lfoMod.begin(lfoWave);
 
         dc.amplitude(0.5);
         envMod.delay(0);
-        envMod.attack(200);
-        envMod.hold(200);
-        envMod.decay(200);
-        envMod.sustain(0.4);
-        envMod.release(1500);
+        envMod.attack(modAttackMs);
+        envMod.hold(0);
+        envMod.decay(modDecayMs);
+        envMod.sustain(modSustainLevel);
+        envMod.release(modReleaseMs);
 
         setCurrentFilter(0);
         filter.frequency(filterFrequency);
@@ -134,6 +142,26 @@ class IO_AudioSynth : public AudioDumb {
     void setSustain(int8_t direction) {
         sustainLevel = pctAdd(sustainLevel, direction);
         env.release(sustainLevel);
+    }
+
+    void setModAttack(int8_t direction) {
+        modAttackMs = constrain(modAttackMs + direction, 0, 11880);
+        env.attack(modAttackMs);
+    }
+
+    void setModDecay(int8_t direction) {
+        modDecayMs = constrain(modDecayMs + direction, 0, 11880);
+        env.decay(modDecayMs);
+    }
+
+    void setModRelease(int8_t direction) {
+        modReleaseMs = constrain(modReleaseMs + direction, 0, 11880);
+        env.release(modReleaseMs);
+    }
+
+    void setModSustain(int8_t direction) {
+        modSustainLevel = pctAdd(modSustainLevel, direction);
+        env.release(modSustainLevel);
     }
 
     void setFrequency(int8_t direction) {

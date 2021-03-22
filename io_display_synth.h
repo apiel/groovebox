@@ -25,7 +25,7 @@ const char* getWave(byte w) {
         case 7:
             return "Sample hold";
         case 8:
-            return "Triangle var";
+            return "Tri var";
     }
     return "unknown";
 }
@@ -46,7 +46,8 @@ void displaySynth(Adafruit_SSD1306* d) {
     d->clearDisplay();
     d->setCursor(0, 0);
 
-    d->printf("%d| %s\n", currentSynth, getWave(synth[currentSynth].currentWaveform));
+    d->printf("%d| %s\n", currentSynth,
+              getWave(synth[currentSynth].currentWaveform));
 
     d->printf("%.1fHz %d%%\n", synth[currentSynth].frequency,
               (int)(synth[currentSynth].amplitude * 100));
@@ -61,6 +62,15 @@ void displaySynth(Adafruit_SSD1306* d) {
               synth[currentSynth].filterFrequency);
     d->printf("Reso %.1f Octave %.1f\n", synth[currentSynth].filterResonance,
               synth[currentSynth].filterOctaveControl);
+
+    addToCursor(d, 0, 4);
+    d->printf("mod %d|%d|%d%%|%d\n", (int)synth[currentSynth].modAttackMs,
+              (int)synth[currentSynth].modDecayMs,
+              (int)(synth[currentSynth].modSustainLevel * 100),
+              (int)synth[currentSynth].modReleaseMs);
+    d->printf("Lfo %.1fHz %d%% %s\n", synth[currentSynth].lfoFrequency,
+              (int)(synth[currentSynth].lfoAmplitude * 100),
+              getWave(synth[currentSynth].lfoWave));
 }
 
 #endif
