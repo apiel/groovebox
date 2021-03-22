@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Audio.h>
 
+#include "AudioSynthWaveTableSD.h"
 #include "arbitraryWaveform.h"
 #include "audio_dumb.h"
 #include "io_util.h"
@@ -23,6 +24,8 @@ class IO_AudioSynth : public AudioDumb {
     AudioSynthWaveformModulated waveform;
     AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
+    // AudioPlaySdRaw raw;
+    AudioSynthWaveTableSD<> waveTable;
 
     byte currentWaveform = WAVEFORM_SINE;
 
@@ -50,17 +53,23 @@ class IO_AudioSynth : public AudioDumb {
 
     IO_AudioSynth() {
         byte pci = 0;  // used only for adding new patchcords
-        patchCord[pci++] = new AudioConnection(lfoMod, waveform);
-        patchCord[pci++] = new AudioConnection(dc, envMod);
-        // this is wrong should be patchCord[pci++] = new AudioConnection(envMod, waveform);
-        // and then have a way to select like for pass filter
-        patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
-        patchCord[pci++] = new AudioConnection(waveform, env);
+        // patchCord[pci++] = new AudioConnection(lfoMod, waveform);
+        // patchCord[pci++] = new AudioConnection(dc, envMod);
+        // // this is wrong should be patchCord[pci++] = new
+        // AudioConnection(envMod, waveform);
+        // // and then have a way to select like for pass filter
+        // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
+        // patchCord[pci++] = new AudioConnection(waveform, env);
+
+        patchCord[pci++] = new AudioConnection(waveTable, env);
+
         patchCord[pci++] = new AudioConnection(env, filter);
         // patchCord[pci++] = new AudioConnection(env, *this);
         patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
         patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
         patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
+
+        // patchCord[pci++] = new AudioConnection(raw, *this);
 
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
@@ -90,16 +99,18 @@ class IO_AudioSynth : public AudioDumb {
         filter.frequency(filterFrequency);
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
+
+        waveTable.load("raw/kick.raw");
     }
 
     void setCurrentFilter(int8_t direction) {
         currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
         // might not need to diconnect, as only the last connected is the one
         // used see https://www.pjrc.com/teensy/td_libs_AudioConnection.html
-        patchCordFilter[0]->disconnect();
-        patchCordFilter[1]->disconnect();
-        patchCordFilter[2]->disconnect();
-        patchCordFilter[currentFilter]->connect();
+        // patchCordFilter[0]->disconnect();
+        // patchCordFilter[1]->disconnect();
+        // patchCordFilter[2]->disconnect();
+        // patchCordFilter[currentFilter]->connect();
     }
 
     void setFilterFrequency(int8_t direction) {
@@ -178,14 +189,19 @@ class IO_AudioSynth : public AudioDumb {
     }
 
     void noteOn() {
+        // to be remove, should go in setup
+        waveTable.load("raw/kick.raw");
+
         envMod.noteOn();
         lfoMod.phaseModulation(0);
         env.noteOn();
+        // raw.play("raw/kick.raw");
     }
 
     void noteOff() {
         env.noteOff();
         envMod.noteOff();
+        // raw.stop();
     }
 };
 
