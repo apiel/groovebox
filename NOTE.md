@@ -31,7 +31,9 @@
     - choose modulation: lfo, env, or custom modulation?
     - waveform, mutliple wave form, wavetable, sample
     - choose filter: env, pass filter, custom ?
-- give possibility to deactivate envelop and have a continous sound... 
+- give possibility to deactivate envelop and have a continous sound...
+
+- save synth into a raw wavetable
 
 # Links
 

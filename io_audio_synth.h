@@ -62,6 +62,7 @@ class IO_AudioSynth : public AudioDumb {
         // patchCord[pci++] = new AudioConnection(waveform, env);
 
         // patchCord[pci++] = new AudioConnection(waveTable, env);
+        // patchCord[pci++] = new AudioConnection(env, *this);
         patchCord[pci++] = new AudioConnection(waveTable, *this);
 
         // patchCord[pci++] = new AudioConnection(env, filter);
@@ -184,6 +185,7 @@ class IO_AudioSynth : public AudioDumb {
         frequency =
             constrain(frequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
         waveform.frequency(frequency);
+        waveTable.frequency(frequency);
     }
 
     void setAmplitude(int8_t direction) {

@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <AudioStream.h>
 
+// AUDIO_SAMPLE_RATE_EXACT 44100
+
 template <uint16_t MAX_TABLE_SIZE = 24000>
 class AudioSynthWaveTableSD : public AudioStream {
    public:
@@ -14,7 +16,7 @@ class AudioSynthWaveTableSD : public AudioStream {
         } else if (freq > AUDIO_SAMPLE_RATE_EXACT / 2) {
             freq = AUDIO_SAMPLE_RATE_EXACT / 2;
         }
-        phase_increment = freq * (4294967296.0 / AUDIO_SAMPLE_RATE_EXACT);
+        phase_increment = freq * (4294967296.0 / AUDIO_SAMPLE_RATE_EXACT); // 4294967296 = 2³²
         if (phase_increment > 0x7FFE0000u) phase_increment = 0x7FFE0000;
     }
 
@@ -116,6 +118,7 @@ class AudioSynthWaveTableSD : public AudioStream {
 
         Serial.print("load file ");
         Serial.println(size);
+        Serial.println(phase_increment);
 
         // for (int i = 0; i < size; i++) {
         //     Serial.println(data[i]);
