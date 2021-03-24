@@ -7,25 +7,31 @@
 #include "io_display_util.h"
 
 const char* getWave(byte w) {
-    switch (w) {
-        case 0:
-            return "Sine";
-        case 1:
-            return "Sawtooth";
-        case 2:
-            return "Square";
-        case 3:
-            return "Triangle";
-        case 4:
-            return "Arbitrary";
-        case 5:
-            return "Pulse";
-        case 6:
-            return "Saw reverse";
-        case 7:
-            return "Sample hold";
-        case 8:
-            return "Tri var";
+    if (w < WAVEFORM_COUNT) {
+        switch (w) {
+            case 0:
+                return "Sine";
+            case 1:
+                return "Sawtooth";
+            case 2:
+                return "Square";
+            case 3:
+                return "Triangle";
+            case 4:
+                return "Arbitrary";
+            case 5:
+                return "Pulse";
+            case 6:
+                return "Saw reverse";
+            case 7:
+                return "Sample hold";
+            case 8:
+                return "Tri var";
+        }
+    }
+    w = w - WAVEFORM_COUNT;
+    if (w < synth[currentSynth].rawWaveCount) {
+        return synth[currentSynth].wavetableName[w];
     }
     return "unknown";
 }

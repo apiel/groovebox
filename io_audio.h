@@ -11,14 +11,14 @@
 AudioOutputMQS audioOut;
 
 IO_AudioSynth synth[SYNTH_COUNT];
-AudioConnection* patchCord[1]; // this will be dependent on SYNTH_COUNT
+AudioConnection* patchCord[1];  // this will be dependent on SYNTH_COUNT
 
 byte currentSynth = 0;
 
 void audioInit() {
     AudioMemory(10);
 
-    synth[0].waveTable.load("raw/kick.raw");
+    synth[0].init();
 
     byte pci = 0;  // used only for adding new patchcords
     patchCord[pci++] = new AudioConnection(synth[0], audioOut);

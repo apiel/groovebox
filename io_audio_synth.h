@@ -9,13 +9,22 @@
 #include "audio_dumb.h"
 #include "io_util.h"
 
+// need to make a PR to get waveform count
 #define WAVEFORM_COUNT 9
+
 #define FILTER_TYPE_COUNT 3
 #define AUDIO_SYNTH_MOD 3
+#define WAVETABLE_COUNT 255 - WAVEFORM_COUNT
+#define WAVETABLE_NAME_LEN 20
+#define WAVETABLE_FOLDER "raw/"
 
 class IO_AudioSynth : public AudioDumb {
    protected:
    public:
+    byte rawWaveCount = 0;
+    char wavetableName[WAVETABLE_COUNT][WAVETABLE_NAME_LEN];
+    char wavetableFullPath[WAVETABLE_NAME_LEN + 10];
+
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
     AudioSynthWaveform lfoMod;
@@ -113,6 +122,39 @@ class IO_AudioSynth : public AudioDumb {
             frequency);
     }
 
+    void init() {
+        rawWaveCount = 0;
+
+        File root = SD.open(WAVETABLE_FOLDER);
+        if (root) {
+            while (true) {
+                File entry = root.openNextFile();
+                if (!entry) {
+                    break;
+                }
+                if (!entry.isDirectory()) {
+                    snprintf(wavetableName[rawWaveCount], WAVETABLE_NAME_LEN,
+                             entry.name());
+                    rawWaveCount++;
+                }
+                entry.close();
+            }
+            root.close();
+        }
+    }
+
+    void setNextWaveform(int8_t direction) {
+        currentWaveform =
+            mod(currentWaveform + direction, WAVEFORM_COUNT + rawWaveCount);
+        if (currentWaveform < WAVEFORM_COUNT) {
+            waveform.begin(currentWaveform);
+        } else {
+            sprintf(wavetableFullPath, "%s%s", WAVETABLE_FOLDER,
+                    wavetableName[currentWaveform - WAVEFORM_COUNT]);
+            waveTable.load(wavetableFullPath);
+        }
+    }
+
     void toggleAdsr() {
         useAdsr = !useAdsr;
         applyFilterCord();
@@ -170,12 +212,6 @@ class IO_AudioSynth : public AudioDumb {
         filterOctaveControl =
             constrain(filterOctaveControl + direction * 0.1, 0.0, 7.0);
         filter.octaveControl(filterOctaveControl);
-    }
-
-    // need to make a PR to get waveform count
-    void setNextWaveform(int8_t direction) {
-        currentWaveform = mod(currentWaveform + direction, WAVEFORM_COUNT);
-        waveform.begin(currentWaveform);
     }
 
     void setAttack(int8_t direction) {
