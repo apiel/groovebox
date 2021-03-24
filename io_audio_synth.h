@@ -190,7 +190,7 @@ class IO_AudioSynth : public AudioDumb {
 
     void noteOn() {
         waveTable.reset();
-        lfoMod.phase(0);
+        lfoMod.phase(0.0);
         envMod.noteOn();
         env.noteOn();
     }

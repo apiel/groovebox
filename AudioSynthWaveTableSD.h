@@ -6,8 +6,6 @@
 
 #include "note.h"
 
-// AUDIO_SAMPLE_RATE_EXACT 44100
-
 template <uint16_t MAX_TABLE_SIZE = 24000>
 class AudioSynthWaveTableSD : public AudioStream {
    public:
