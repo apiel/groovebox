@@ -16,13 +16,6 @@
 class IO_AudioSynth : public AudioDumb {
    protected:
    public:
-    AudioConnection* patchCord[5];
-    AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
-    AudioConnection* patchCordEnvToFilter;
-    AudioConnection* patchCordWaveToFilter;
-    AudioConnection* patchCordWaveToEnv;
-    AudioConnection* patchCordLfoToWave;
-
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
     AudioSynthWaveform lfoMod;
@@ -49,27 +42,29 @@ class IO_AudioSynth : public AudioDumb {
     byte currentFilter = 0;
 
     byte modulation = 0;
-    float modAttackMs = 100;
-    float modDecayMs = 50;
-    float modSustainLevel = 70;
-    float modReleaseMs = 50;
+    float modAttackMs = 100.0;
+    float modDecayMs = 50.0;
+    float modSustainLevel = 70.0;
+    float modReleaseMs = 50.0;
 
     float lfoFrequency = 1.0;
     float lfoAmplitude = 0.5;
     byte lfoWave = WAVEFORM_SINE;
 
+    AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
+    AudioConnection* patchCordEnvToFilter;
+    AudioConnection* patchCordWaveToFilter;
+    AudioConnection* patchCordWaveToEnv;
+    AudioConnection* patchCordLfoToWave;
+    AudioConnection* patchCordDcToEnvMod;
+    AudioConnection* patchCordEnvModToWave;
+
     // waveform knob will be used to select as well SD raw file
     // if over WAVEFORM_COUNT then go raw dir
 
     IO_AudioSynth() {
-        byte pci = 0;  // used only for adding new patchcords
-        // patchCord[pci++] = new AudioConnection(lfoMod, waveform);
-        // patchCord[pci++] = new AudioConnection(dc, envMod);
-        // this is wrong should be patchCord[pci++] = new
-        // AudioConnection(envMod, waveform);
-        // and then have a way to select like for pass filter
-        // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
-        // patchCord[pci++] = new AudioConnection(waveform, env);
+        patchCordDcToEnvMod = new AudioConnection(dc, envMod);
+        patchCordEnvModToWave = new AudioConnection(envMod, waveTable);
 
         patchCordLfoToWave = new AudioConnection(lfoMod, waveTable);
 
@@ -142,7 +137,12 @@ class IO_AudioSynth : public AudioDumb {
 
     void applyModulationCord() {
         patchCordLfoToWave->disconnect();
-        if (modulation == 2) {
+        patchCordDcToEnvMod->disconnect();
+        patchCordEnvModToWave->disconnect();
+        if (modulation == 1) {
+            patchCordDcToEnvMod->connect();
+            patchCordEnvModToWave->connect();
+        } else if (modulation == 2) {
             patchCordLfoToWave->connect();
         }
     }
