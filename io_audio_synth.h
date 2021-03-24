@@ -58,11 +58,9 @@ class IO_AudioSynth : public AudioDumb {
         // AudioConnection(envMod, waveform);
         // // and then have a way to select like for pass filter
         // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
-        // patchCord[pci++] = new AudioConnection(waveform, env);
 
+        // patchCord[pci++] = new AudioConnection(waveform, env);
         patchCord[pci++] = new AudioConnection(waveTable, env);
-        // patchCord[pci++] = new AudioConnection(env, *this);
-        // patchCord[pci++] = new AudioConnection(waveTable, *this);
 
         patchCord[pci++] = new AudioConnection(env, filter);
         patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
@@ -98,7 +96,11 @@ class IO_AudioSynth : public AudioDumb {
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
 
-        waveTable.amplitude(amplitude)->frequency(frequency);
+        waveTable
+            .amplitude(amplitude)
+            ->setStart(4000)
+            ->setEnd(5000)
+            ->frequency(frequency);
     }
 
     void setCurrentFilter(int8_t direction) {
@@ -152,7 +154,7 @@ class IO_AudioSynth : public AudioDumb {
 
     void setSustain(int8_t direction) {
         sustainLevel = pctAdd(sustainLevel, direction);
-        env.release(sustainLevel);
+        env.sustain(sustainLevel);
     }
 
     void setModAttack(int8_t direction) {

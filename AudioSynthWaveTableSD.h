@@ -33,6 +33,8 @@ class AudioSynthWaveTableSD : public AudioStream {
             return;  // but here we might still want to increase the
                      // phase_accumulator
 
+        Serial.printf("Start %d end %d size %d\n", start, end, size);
+
         for (unsigned int i = 0; i < AUDIO_BLOCK_SAMPLES; i++) {
             phase_accumulator += phase_increment;
             if ((uint32_t)phase_accumulator > end) {
@@ -70,7 +72,7 @@ class AudioSynthWaveTableSD : public AudioStream {
     }
 
     AudioSynthWaveTableSD *setEnd(uint32_t val) {
-        end = min(val, size);
+        end = min(val, size ? size : MAX_TABLE_SIZE);
         return this;
     }
 
