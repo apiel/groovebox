@@ -11,7 +11,8 @@
 template <uint16_t MAX_TABLE_SIZE = 24000>
 class AudioSynthWaveTableSD : public AudioStream {
    public:
-    AudioSynthWaveTableSD() : AudioStream(0, NULL), magnitude(16384) {}
+    AudioSynthWaveTableSD()
+        : AudioStream(1, inputQueueArray), magnitude(16384) {}
     AudioSynthWaveTableSD *frequency(float freq) {
         if (freq <= 0.0) {
             phase_increment = 0.0;
@@ -33,16 +34,20 @@ class AudioSynthWaveTableSD : public AudioStream {
             return;  // but here we might still want to increase the
                      // phase_accumulator
 
-        Serial.printf("Start %d end %d size %d\n", start, end, size);
+        audio_block_t *modinput = receiveReadOnly();
 
         for (unsigned int i = 0; i < AUDIO_BLOCK_SAMPLES; i++) {
             phase_accumulator += phase_increment;
             if ((uint32_t)phase_accumulator > end) {
                 phase_accumulator = start;
             }
-            block->data[i] =
-                (int16_t)(data[(uint32_t)phase_accumulator] * magnitude);
+
+            int16_t mod = modinput ? modinput->data[i] : 0;
+            block->data[i] = (int16_t)(
+                (data[(uint32_t)phase_accumulator] + mod) * magnitude);
         }
+
+        if (modinput) release(modinput);
 
         transmit(block);
         release(block);
@@ -91,6 +96,8 @@ class AudioSynthWaveTableSD : public AudioStream {
     uint32_t size = 0;
     uint32_t end = MAX_TABLE_SIZE;
     uint32_t start = 0;
+
+    audio_block_t *inputQueueArray[1];
 };
 
 #endif

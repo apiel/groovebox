@@ -54,12 +54,13 @@ class IO_AudioSynth : public AudioDumb {
         byte pci = 0;  // used only for adding new patchcords
         // patchCord[pci++] = new AudioConnection(lfoMod, waveform);
         // patchCord[pci++] = new AudioConnection(dc, envMod);
-        // // this is wrong should be patchCord[pci++] = new
+        // this is wrong should be patchCord[pci++] = new
         // AudioConnection(envMod, waveform);
-        // // and then have a way to select like for pass filter
+        // and then have a way to select like for pass filter
         // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
-
         // patchCord[pci++] = new AudioConnection(waveform, env);
+
+        patchCord[pci++] = new AudioConnection(lfoMod, waveTable);
         patchCord[pci++] = new AudioConnection(waveTable, env);
 
         patchCord[pci++] = new AudioConnection(env, filter);
@@ -96,11 +97,8 @@ class IO_AudioSynth : public AudioDumb {
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
 
-        waveTable
-            .amplitude(amplitude)
-            ->setStart(4000)
-            ->setEnd(5000)
-            ->frequency(frequency);
+        waveTable.amplitude(amplitude)->setStart(4000)->setEnd(5000)->frequency(
+            frequency);
     }
 
     void setCurrentFilter(int8_t direction) {
