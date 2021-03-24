@@ -16,7 +16,7 @@ class IO_AudioSynthModulation : public AudioDumb {
     AudioEffectEnvelope envMod;
     AudioSynthWaveform lfoMod;
 
-    byte modulation = 0;
+    byte currentModulation = 0;
     float modAttackMs = 100.0;
     float modDecayMs = 50.0;
     float modSustainLevel = 70.0;
@@ -53,7 +53,7 @@ class IO_AudioSynthModulation : public AudioDumb {
     void init() { applyCord(); }
 
     void setModulation(int8_t direction) {
-        modulation = mod(modulation + direction, AUDIO_SYNTH_MOD);
+        currentModulation = mod(currentModulation + direction, AUDIO_SYNTH_MOD);
         applyCord();
     }
 
@@ -61,10 +61,10 @@ class IO_AudioSynthModulation : public AudioDumb {
         patchCordLfoToWave->disconnect();
         patchCordDcToEnvMod->disconnect();
         patchCordEnvModToWave->disconnect();
-        if (modulation == 1) {
+        if (currentModulation == 1) {
             patchCordDcToEnvMod->connect();
             patchCordEnvModToWave->connect();
-        } else if (modulation == 2) {
+        } else if (currentModulation == 2) {
             patchCordLfoToWave->connect();
         }
     }
