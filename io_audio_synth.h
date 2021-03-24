@@ -11,6 +11,7 @@
 
 #define WAVEFORM_COUNT 9
 #define FILTER_TYPE_COUNT 3
+#define AUDIO_SYNTH_MOD 3
 
 class IO_AudioSynth : public AudioDumb {
    protected:
@@ -20,6 +21,7 @@ class IO_AudioSynth : public AudioDumb {
     AudioConnection* patchCordEnvToFilter;
     AudioConnection* patchCordWaveToFilter;
     AudioConnection* patchCordWaveToEnv;
+    AudioConnection* patchCordLfoToWave;
 
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
@@ -46,13 +48,14 @@ class IO_AudioSynth : public AudioDumb {
     float filterResonance = 0.707;
     byte currentFilter = 0;
 
-    float modAttackMs = 0;
+    byte modulation = 0;
+    float modAttackMs = 100;
     float modDecayMs = 50;
-    float modSustainLevel = 0;
-    float modReleaseMs = 0;
+    float modSustainLevel = 70;
+    float modReleaseMs = 50;
 
     float lfoFrequency = 1.0;
-    float lfoAmplitude = 0.0;
+    float lfoAmplitude = 0.5;
     byte lfoWave = WAVEFORM_SINE;
 
     // waveform knob will be used to select as well SD raw file
@@ -68,17 +71,19 @@ class IO_AudioSynth : public AudioDumb {
         // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
         // patchCord[pci++] = new AudioConnection(waveform, env);
 
-        patchCord[pci++] = new AudioConnection(lfoMod, waveTable);
+        patchCordLfoToWave = new AudioConnection(lfoMod, waveTable);
 
         patchCordWaveToFilter = new AudioConnection(waveTable, filter);
 
         patchCordWaveToEnv = new AudioConnection(waveTable, env);
         patchCordEnvToFilter = new AudioConnection(env, filter);
-        applyFilterCord();
 
         patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
         patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
         patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
+
+        applyFilterCord();
+        applyModulationCord();
 
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
@@ -127,6 +132,18 @@ class IO_AudioSynth : public AudioDumb {
             patchCordWaveToFilter->connect();
             patchCordEnvToFilter->disconnect();
             patchCordWaveToEnv->disconnect();
+        }
+    }
+
+    void setModulation(int8_t direction) {
+        modulation = mod(modulation + direction, AUDIO_SYNTH_MOD);
+        applyModulationCord();
+    }
+
+    void applyModulationCord() {
+        patchCordLfoToWave->disconnect();
+        if (modulation == 2) {
+            patchCordLfoToWave->connect();
         }
     }
 
