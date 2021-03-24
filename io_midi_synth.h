@@ -26,11 +26,11 @@ void synthNoteOffHandler(byte channel, byte note, byte velocity) {
 void synthControlChangeHandler(byte channel, byte knob, int8_t direction) {
     if (channel == 11) {
         if (knob == 1) {
-            synth[currentSynth].setNextWaveform(direction);
+            synth[currentSynth].wave.setNextWaveform(direction);
         } else if (knob == 2) {
-            synth[currentSynth].setFrequency(direction);
+            synth[currentSynth].wave.setFrequency(direction);
         } else if (knob == 3) {
-            synth[currentSynth].setAmplitude(direction);
+            synth[currentSynth].wave.setAmplitude(direction);
         } else if (knob == 4) {
             synth[currentSynth].setModulation(direction);
         } else if (knob == 5) {

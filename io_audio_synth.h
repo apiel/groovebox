@@ -4,36 +4,22 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "AudioSynthWaveTableSD.h"
-#include "arbitraryWaveform.h"
 #include "audio_dumb.h"
+#include "io_audio_synth_wave.h"
 #include "io_util.h"
-
-// need to make a PR to get waveform count
-#define WAVEFORM_COUNT 9
 
 #define FILTER_TYPE_COUNT 3
 #define AUDIO_SYNTH_MOD 3
-#define WAVETABLE_COUNT 255 - WAVEFORM_COUNT
-#define WAVETABLE_NAME_LEN 20
-#define WAVETABLE_FOLDER "raw/"
 
 class IO_AudioSynth : public AudioDumb {
    protected:
    public:
-    byte rawWaveCount = 0;
-    char wavetableName[WAVETABLE_COUNT][WAVETABLE_NAME_LEN];
-    char wavetableFullPath[WAVETABLE_NAME_LEN + 10];
-
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
     AudioSynthWaveform lfoMod;
-    AudioSynthWaveformModulated waveform;
     AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
-    AudioSynthWaveTableSD<> waveTable;
-
-    byte currentWaveform = WAVEFORM_SINE;
+    IO_AudioSynthWave wave;
 
     bool useAdsr = true;
 
@@ -41,9 +27,6 @@ class IO_AudioSynth : public AudioDumb {
     float decayMs = 50;
     float sustainLevel = 0;
     float releaseMs = 0;
-
-    float frequency = 440;
-    float amplitude = 1.0;
 
     float filterFrequency = 1000;
     float filterOctaveControl = 1.0;
@@ -73,13 +56,13 @@ class IO_AudioSynth : public AudioDumb {
 
     IO_AudioSynth() {
         patchCordDcToEnvMod = new AudioConnection(dc, envMod);
-        patchCordEnvModToWave = new AudioConnection(envMod, waveTable);
+        patchCordEnvModToWave = new AudioConnection(envMod, wave.input);
 
-        patchCordLfoToWave = new AudioConnection(lfoMod, waveTable);
+        patchCordLfoToWave = new AudioConnection(lfoMod, wave.input);
 
-        patchCordWaveToFilter = new AudioConnection(waveTable, filter);
+        patchCordWaveToFilter = new AudioConnection(wave, filter);
 
-        patchCordWaveToEnv = new AudioConnection(waveTable, env);
+        patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter);
 
         patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
@@ -88,11 +71,6 @@ class IO_AudioSynth : public AudioDumb {
 
         applyFilterCord();
         applyModulationCord();
-
-        waveform.frequency(frequency);
-        waveform.amplitude(amplitude);
-        waveform.arbitraryWaveform(arbitraryWaveform, 172.0);
-        waveform.begin(currentWaveform);
 
         env.attack(attackMs);
         env.decay(decayMs);
@@ -117,43 +95,9 @@ class IO_AudioSynth : public AudioDumb {
         filter.frequency(filterFrequency);
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
-
-        waveTable.amplitude(amplitude)->setStart(4000)->setEnd(5000)->frequency(
-            frequency);
     }
 
-    void init() {
-        rawWaveCount = 0;
-
-        File root = SD.open(WAVETABLE_FOLDER);
-        if (root) {
-            while (true) {
-                File entry = root.openNextFile();
-                if (!entry) {
-                    break;
-                }
-                if (!entry.isDirectory()) {
-                    snprintf(wavetableName[rawWaveCount], WAVETABLE_NAME_LEN,
-                             entry.name());
-                    rawWaveCount++;
-                }
-                entry.close();
-            }
-            root.close();
-        }
-    }
-
-    void setNextWaveform(int8_t direction) {
-        currentWaveform =
-            mod(currentWaveform + direction, WAVEFORM_COUNT + rawWaveCount);
-        if (currentWaveform < WAVEFORM_COUNT) {
-            waveform.begin(currentWaveform);
-        } else {
-            sprintf(wavetableFullPath, "%s%s", WAVETABLE_FOLDER,
-                    wavetableName[currentWaveform - WAVEFORM_COUNT]);
-            waveTable.load(wavetableFullPath);
-        }
-    }
+    void init() { wave.init(); }
 
     void toggleAdsr() {
         useAdsr = !useAdsr;
@@ -254,21 +198,8 @@ class IO_AudioSynth : public AudioDumb {
         env.release(modSustainLevel);
     }
 
-    void setFrequency(int8_t direction) {
-        frequency =
-            constrain(frequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
-        waveform.frequency(frequency);
-        waveTable.frequency(frequency);
-    }
-
-    void setAmplitude(int8_t direction) {
-        amplitude = pctAdd(amplitude, direction);
-        waveform.amplitude(amplitude);
-        waveTable.amplitude(amplitude);
-    }
-
     void noteOn() {
-        waveTable.reset();
+        wave.waveTable.reset();
         lfoMod.phase(0.0);
         envMod.noteOn();
         env.noteOn();

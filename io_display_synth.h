@@ -30,8 +30,8 @@ const char* getWave(byte w) {
         }
     }
     w = w - WAVEFORM_COUNT;
-    if (w < synth[currentSynth].rawWaveCount) {
-        return synth[currentSynth].wavetableName[w];
+    if (w < synth[currentSynth].wave.rawWaveCount) {
+        return synth[currentSynth].wave.wavetableName[w];
     }
     return "unknown";
 }
@@ -53,10 +53,10 @@ void displaySynth(Adafruit_SSD1306* d) {
     d->setCursor(0, 0);
 
     d->printf("%d| %s\n", currentSynth,
-              getWave(synth[currentSynth].currentWaveform));
+              getWave(synth[currentSynth].wave.currentWaveform));
 
-    d->printf("%.1fHz %d%%\n", synth[currentSynth].frequency,
-              (int)(synth[currentSynth].amplitude * 100));
+    d->printf("%.1fHz %d%%\n", synth[currentSynth].wave.frequency,
+              (int)(synth[currentSynth].wave.amplitude * 100));
 
     if (synth[currentSynth].useAdsr) {
         d->printf("ADSR %d|%d|%d%%|%d\n", (int)synth[currentSynth].attackMs,

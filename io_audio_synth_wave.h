@@ -1,0 +1,120 @@
+#ifndef IO_AUDIO_SYNTH_WAVE_H_
+#define IO_AUDIO_SYNTH_WAVE_H_
+
+#include <Arduino.h>
+#include <Audio.h>
+
+#include "AudioSynthWaveTableSD.h"
+#include "arbitraryWaveform.h"
+#include "audio_dumb.h"
+#include "io_util.h"
+
+// need to make a PR to get waveform count
+#define WAVEFORM_COUNT 9
+
+#define WAVETABLE_COUNT 255 - WAVEFORM_COUNT
+#define WAVETABLE_NAME_LEN 20
+#define WAVETABLE_FOLDER "raw/"
+
+class IO_AudioSynthWave : public AudioDumb {
+   protected:
+   public:
+    byte rawWaveCount = 0;
+    char wavetableName[WAVETABLE_COUNT][WAVETABLE_NAME_LEN];
+    char wavetableFullPath[WAVETABLE_NAME_LEN + 10];
+
+    AudioSynthWaveformModulated waveform;
+    AudioSynthWaveTableSD<> waveTable;
+    AudioDumb input;
+
+    byte currentWaveform = WAVEFORM_SINE;
+
+    float frequency = 440;
+    float amplitude = 1.0;
+
+    AudioConnection* patchCordInputToWaveForm;
+    AudioConnection* patchCordWaveFormToDumb;
+
+    AudioConnection* patchCordInputToWaveTable;
+    AudioConnection* patchCordWaveTableToDumb;
+
+    IO_AudioSynthWave() {
+        patchCordInputToWaveForm = new AudioConnection(input, waveform);
+        patchCordInputToWaveTable = new AudioConnection(input, waveTable);
+
+        patchCordWaveFormToDumb = new AudioConnection(waveform, *this);
+        patchCordWaveTableToDumb = new AudioConnection(waveTable, *this);
+
+        applyCord();
+
+        waveform.frequency(frequency);
+        waveform.amplitude(amplitude);
+        waveform.arbitraryWaveform(arbitraryWaveform, 172.0);
+        waveform.begin(currentWaveform);
+
+        waveTable.amplitude(amplitude)->frequency(frequency);
+    }
+
+    void applyCord() {
+        if (currentWaveform < WAVEFORM_COUNT) {
+            patchCordWaveFormToDumb->connect();
+            patchCordInputToWaveForm->connect();
+            patchCordInputToWaveTable->disconnect();
+            patchCordWaveTableToDumb->disconnect();
+        } else {
+            patchCordInputToWaveTable->connect();
+            patchCordWaveTableToDumb->connect();
+            patchCordWaveFormToDumb->disconnect();
+            patchCordInputToWaveForm->disconnect();
+        }
+    }
+
+    void setFrequency(int8_t direction) {
+        frequency =
+            constrain(frequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
+        waveform.frequency(frequency);
+        waveTable.frequency(frequency);
+    }
+
+    void setAmplitude(int8_t direction) {
+        amplitude = pctAdd(amplitude, direction);
+        waveform.amplitude(amplitude);
+        waveTable.amplitude(amplitude);
+    }
+
+    void init() {
+        rawWaveCount = 0;
+
+        File root = SD.open(WAVETABLE_FOLDER);
+        if (root) {
+            while (true) {
+                File entry = root.openNextFile();
+                if (!entry) {
+                    break;
+                }
+                if (!entry.isDirectory()) {
+                    snprintf(wavetableName[rawWaveCount], WAVETABLE_NAME_LEN,
+                             entry.name());
+                    rawWaveCount++;
+                }
+                entry.close();
+            }
+            root.close();
+        }
+    }
+
+    void setNextWaveform(int8_t direction) {
+        currentWaveform =
+            mod(currentWaveform + direction, WAVEFORM_COUNT + rawWaveCount);
+        if (currentWaveform < WAVEFORM_COUNT) {
+            waveform.begin(currentWaveform);
+        } else {
+            sprintf(wavetableFullPath, "%s%s", WAVETABLE_FOLDER,
+                    wavetableName[currentWaveform - WAVEFORM_COUNT]);
+            waveTable.load(wavetableFullPath);
+        }
+        applyCord();
+    }
+};
+
+#endif

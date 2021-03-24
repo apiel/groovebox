@@ -14,7 +14,7 @@ class AudioDumb : public AudioStream {
         release(block);
     }
 
-   private:
+   protected:
     audio_block_t *inputQueueArray[1];
 };
 
