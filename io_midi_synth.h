@@ -32,7 +32,7 @@ void synthControlChangeHandler(byte channel, byte knob, int8_t direction) {
         } else if (knob == 3) {
             synth[currentSynth].wave.setAmplitude(direction);
         } else if (knob == 4) {
-            synth[currentSynth].setModulation(direction);
+            synth[currentSynth].modulation.setModulation(direction);
         } else if (knob == 5) {
             synth[currentSynth].setAttack(direction);
         } else if (knob == 6) {

@@ -39,8 +39,8 @@ class IO_AudioSynthWave : public AudioDumb {
     AudioConnection* patchCordWaveTableToDumb;
 
     IO_AudioSynthWave() {
-        patchCordInputToWaveForm = new AudioConnection(input, waveform);
         patchCordInputToWaveTable = new AudioConnection(input, waveTable);
+        patchCordInputToWaveForm = new AudioConnection(input, waveform);
 
         patchCordWaveFormToDumb = new AudioConnection(waveform, *this);
         patchCordWaveTableToDumb = new AudioConnection(waveTable, *this);
@@ -57,15 +57,15 @@ class IO_AudioSynthWave : public AudioDumb {
 
     void applyCord() {
         if (currentWaveform < WAVEFORM_COUNT) {
-            patchCordWaveFormToDumb->connect();
-            patchCordInputToWaveForm->connect();
             patchCordInputToWaveTable->disconnect();
             patchCordWaveTableToDumb->disconnect();
+            patchCordWaveFormToDumb->connect();
+            patchCordInputToWaveForm->connect();
         } else {
-            patchCordInputToWaveTable->connect();
-            patchCordWaveTableToDumb->connect();
             patchCordWaveFormToDumb->disconnect();
             patchCordInputToWaveForm->disconnect();
+            patchCordInputToWaveTable->connect();
+            patchCordWaveTableToDumb->connect();
         }
     }
 
@@ -101,6 +101,7 @@ class IO_AudioSynthWave : public AudioDumb {
             }
             root.close();
         }
+        applyCord();
     }
 
     void setNextWaveform(int8_t direction) {

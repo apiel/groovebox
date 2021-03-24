@@ -5,6 +5,7 @@
 #include <Audio.h>
 
 #include "audio_dumb.h"
+#include "io_audio_synth_modulation.h"
 #include "io_audio_synth_wave.h"
 #include "io_util.h"
 
@@ -14,9 +15,7 @@
 class IO_AudioSynth : public AudioDumb {
    protected:
    public:
-    AudioSynthWaveformDc dc;
-    AudioEffectEnvelope envMod;
-    AudioSynthWaveform lfoMod;
+    IO_AudioSynthModulation modulation;
     AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
     IO_AudioSynthWave wave;
@@ -33,44 +32,22 @@ class IO_AudioSynth : public AudioDumb {
     float filterResonance = 0.707;
     byte currentFilter = 0;
 
-    byte modulation = 0;
-    float modAttackMs = 100.0;
-    float modDecayMs = 50.0;
-    float modSustainLevel = 70.0;
-    float modReleaseMs = 50.0;
-
-    float lfoFrequency = 1.0;
-    float lfoAmplitude = 0.5;
-    byte lfoWave = WAVEFORM_SINE;
-
     AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
     AudioConnection* patchCordEnvToFilter;
     AudioConnection* patchCordWaveToFilter;
     AudioConnection* patchCordWaveToEnv;
-    AudioConnection* patchCordLfoToWave;
-    AudioConnection* patchCordDcToEnvMod;
-    AudioConnection* patchCordEnvModToWave;
-
-    // waveform knob will be used to select as well SD raw file
-    // if over WAVEFORM_COUNT then go raw dir
+    AudioConnection* patchCordMod;
 
     IO_AudioSynth() {
-        patchCordDcToEnvMod = new AudioConnection(dc, envMod);
-        patchCordEnvModToWave = new AudioConnection(envMod, wave.input);
-
-        patchCordLfoToWave = new AudioConnection(lfoMod, wave.input);
-
+        patchCordMod = new AudioConnection(modulation, wave.input);
         patchCordWaveToFilter = new AudioConnection(wave, filter);
-
         patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter);
-
         patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
         patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
         patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
 
         applyFilterCord();
-        applyModulationCord();
 
         env.attack(attackMs);
         env.decay(decayMs);
@@ -79,25 +56,16 @@ class IO_AudioSynth : public AudioDumb {
         env.hold(0);
         env.delay(0);
 
-        lfoMod.frequency(lfoFrequency);
-        lfoMod.amplitude(lfoAmplitude);
-        lfoMod.begin(lfoWave);
-
-        dc.amplitude(0.5);
-        envMod.delay(0);
-        envMod.attack(modAttackMs);
-        envMod.hold(0);
-        envMod.decay(modDecayMs);
-        envMod.sustain(modSustainLevel);
-        envMod.release(modReleaseMs);
-
         setCurrentFilter(0);
         filter.frequency(filterFrequency);
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
     }
 
-    void init() { wave.init(); }
+    void init() { 
+        wave.init();
+        modulation.init();
+    }
 
     void toggleAdsr() {
         useAdsr = !useAdsr;
@@ -113,23 +81,6 @@ class IO_AudioSynth : public AudioDumb {
             patchCordWaveToFilter->connect();
             patchCordEnvToFilter->disconnect();
             patchCordWaveToEnv->disconnect();
-        }
-    }
-
-    void setModulation(int8_t direction) {
-        modulation = mod(modulation + direction, AUDIO_SYNTH_MOD);
-        applyModulationCord();
-    }
-
-    void applyModulationCord() {
-        patchCordLfoToWave->disconnect();
-        patchCordDcToEnvMod->disconnect();
-        patchCordEnvModToWave->disconnect();
-        if (modulation == 1) {
-            patchCordDcToEnvMod->connect();
-            patchCordEnvModToWave->connect();
-        } else if (modulation == 2) {
-            patchCordLfoToWave->connect();
         }
     }
 
@@ -178,36 +129,16 @@ class IO_AudioSynth : public AudioDumb {
         env.sustain(sustainLevel);
     }
 
-    void setModAttack(int8_t direction) {
-        modAttackMs = constrain(modAttackMs + direction, 0, 11880);
-        env.attack(modAttackMs);
-    }
-
-    void setModDecay(int8_t direction) {
-        modDecayMs = constrain(modDecayMs + direction, 0, 11880);
-        env.decay(modDecayMs);
-    }
-
-    void setModRelease(int8_t direction) {
-        modReleaseMs = constrain(modReleaseMs + direction, 0, 11880);
-        env.release(modReleaseMs);
-    }
-
-    void setModSustain(int8_t direction) {
-        modSustainLevel = pctAdd(modSustainLevel, direction);
-        env.release(modSustainLevel);
-    }
-
     void noteOn() {
         wave.waveTable.reset();
-        lfoMod.phase(0.0);
-        envMod.noteOn();
+        modulation.lfoMod.phase(0.0);
+        modulation.envMod.noteOn();
         env.noteOn();
     }
 
     void noteOff() {
         env.noteOff();
-        envMod.noteOff();
+        modulation.envMod.noteOff();
     }
 };
 
