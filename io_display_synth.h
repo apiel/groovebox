@@ -52,10 +52,14 @@ void displaySynth(Adafruit_SSD1306* d) {
     d->printf("%.1fHz %d%%\n", synth[currentSynth].frequency,
               (int)(synth[currentSynth].amplitude * 100));
 
-    d->printf("ADSR %d|%d|%d%%|%d\n", (int)synth[currentSynth].attackMs,
-              (int)synth[currentSynth].decayMs,
-              (int)(synth[currentSynth].sustainLevel * 100),
-              (int)synth[currentSynth].releaseMs);
+    if (synth[currentSynth].useAdsr) {
+        d->printf("ADSR %d|%d|%d%%|%d\n", (int)synth[currentSynth].attackMs,
+                  (int)synth[currentSynth].decayMs,
+                  (int)(synth[currentSynth].sustainLevel * 100),
+                  (int)synth[currentSynth].releaseMs);
+    } else {
+        d->println("ADSR off");
+    }
 
     addToCursor(d, 0, 4);
     d->printf("%s %.1fHz\n", getFilter(synth[currentSynth].currentFilter),

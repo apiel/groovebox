@@ -17,6 +17,9 @@ class IO_AudioSynth : public AudioDumb {
    public:
     AudioConnection* patchCord[5];
     AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
+    AudioConnection* patchCordEnvToFilter;
+    AudioConnection* patchCordWaveToFilter;
+    AudioConnection* patchCordWaveToEnv;
 
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
@@ -27,6 +30,8 @@ class IO_AudioSynth : public AudioDumb {
     AudioSynthWaveTableSD<> waveTable;
 
     byte currentWaveform = WAVEFORM_SINE;
+
+    bool useAdsr = true;
 
     float attackMs = 0;
     float decayMs = 50;
@@ -50,6 +55,9 @@ class IO_AudioSynth : public AudioDumb {
     float lfoAmplitude = 0.0;
     byte lfoWave = WAVEFORM_SINE;
 
+    // waveform knob will be used to select as well SD raw file
+    // if over WAVEFORM_COUNT then go raw dir
+
     IO_AudioSynth() {
         byte pci = 0;  // used only for adding new patchcords
         // patchCord[pci++] = new AudioConnection(lfoMod, waveform);
@@ -61,9 +69,13 @@ class IO_AudioSynth : public AudioDumb {
         // patchCord[pci++] = new AudioConnection(waveform, env);
 
         patchCord[pci++] = new AudioConnection(lfoMod, waveTable);
-        patchCord[pci++] = new AudioConnection(waveTable, env);
 
-        patchCord[pci++] = new AudioConnection(env, filter);
+        patchCordWaveToFilter = new AudioConnection(waveTable, filter);
+
+        patchCordWaveToEnv = new AudioConnection(waveTable, env);
+        patchCordEnvToFilter = new AudioConnection(env, filter);
+        applyFilterCord();
+
         patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
         patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
         patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
@@ -101,14 +113,28 @@ class IO_AudioSynth : public AudioDumb {
             frequency);
     }
 
+    void toggleAdsr() {
+        useAdsr = !useAdsr;
+        applyFilterCord();
+    }
+
+    void applyFilterCord() {
+        if (useAdsr) {
+            patchCordWaveToFilter->disconnect();
+            patchCordWaveToEnv->connect();
+            patchCordEnvToFilter->connect();
+        } else {
+            patchCordWaveToFilter->connect();
+            patchCordEnvToFilter->disconnect();
+            patchCordWaveToEnv->disconnect();
+        }
+    }
+
     void setCurrentFilter(int8_t direction) {
         currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
-        // might not need to diconnect, as only the last connected is the one
-        // used see https://www.pjrc.com/teensy/td_libs_AudioConnection.html
-        // patchCordFilter[0]->disconnect();
-        // patchCordFilter[1]->disconnect();
-        // patchCordFilter[2]->disconnect();
-        // patchCordFilter[currentFilter]->connect();
+        // as only the last connected is the one used
+        // https://www.pjrc.com/teensy/td_libs_AudioConnection.html
+        patchCordFilter[currentFilter]->connect();
     }
 
     void setFilterFrequency(int8_t direction) {
