@@ -20,7 +20,7 @@ class IO_AudioSynth : public AudioDumb {
 
     AudioSynthWaveformDc dc;
     AudioEffectEnvelope envMod;
-    AudioSynthWaveformModulated lfoMod;
+    AudioSynthWaveform lfoMod;
     AudioSynthWaveformModulated waveform;
     AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
@@ -190,8 +190,8 @@ class IO_AudioSynth : public AudioDumb {
 
     void noteOn() {
         waveTable.reset();
+        lfoMod.phase(0);
         envMod.noteOn();
-        lfoMod.phaseModulation(0);
         env.noteOn();
     }
 
