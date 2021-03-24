@@ -53,8 +53,7 @@ class AudioSynthWaveTableSD : public AudioStream {
             return false;
         }
         size = rawfile.read(data, min(MAX_TABLE_SIZE, rawfile.size()));
-        end = size;
-        // end = min(end, size);
+        end = min(end, size);
 
         rawfile.close();
         return true;
@@ -72,6 +71,11 @@ class AudioSynthWaveTableSD : public AudioStream {
 
     AudioSynthWaveTableSD *setEnd(uint32_t val) {
         end = min(val, size);
+        return this;
+    }
+
+    AudioSynthWaveTableSD *reset() {
+        phase_accumulator = 0;
         return this;
     }
 

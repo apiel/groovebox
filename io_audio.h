@@ -18,6 +18,8 @@ byte currentSynth = 0;
 void audioInit() {
     AudioMemory(10);
 
+    synth[0].waveTable.load("raw/kick.raw");
+
     byte pci = 0;  // used only for adding new patchcords
     patchCord[pci++] = new AudioConnection(synth[0], audioOut);
 }

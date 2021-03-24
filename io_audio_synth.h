@@ -24,7 +24,6 @@ class IO_AudioSynth : public AudioDumb {
     AudioSynthWaveformModulated waveform;
     AudioEffectEnvelope env;
     AudioFilterStateVariable filter;
-    // AudioPlaySdRaw raw;
     AudioSynthWaveTableSD<> waveTable;
 
     byte currentWaveform = WAVEFORM_SINE;
@@ -61,17 +60,14 @@ class IO_AudioSynth : public AudioDumb {
         // patchCord[pci++] = new AudioConnection(envMod, 0, waveform, 1);
         // patchCord[pci++] = new AudioConnection(waveform, env);
 
-        // patchCord[pci++] = new AudioConnection(waveTable, env);
+        patchCord[pci++] = new AudioConnection(waveTable, env);
         // patchCord[pci++] = new AudioConnection(env, *this);
-        patchCord[pci++] = new AudioConnection(waveTable, *this);
+        // patchCord[pci++] = new AudioConnection(waveTable, *this);
 
-        // patchCord[pci++] = new AudioConnection(env, filter);
-        // // patchCord[pci++] = new AudioConnection(env, *this);
-        // patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
-        // patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
-        // patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
-
-        // patchCord[pci++] = new AudioConnection(raw, *this);
+        patchCord[pci++] = new AudioConnection(env, filter);
+        patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
+        patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
+        patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
 
         waveform.frequency(frequency);
         waveform.amplitude(amplitude);
@@ -102,9 +98,7 @@ class IO_AudioSynth : public AudioDumb {
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
 
-        waveTable.load("raw/kick.raw");
-        waveTable.amplitude(amplitude);
-        waveTable.frequency(frequency);
+        waveTable.amplitude(amplitude)->frequency(frequency);
     }
 
     void setCurrentFilter(int8_t direction) {
@@ -195,19 +189,15 @@ class IO_AudioSynth : public AudioDumb {
     }
 
     void noteOn() {
-        // to be remove, should go in setup
-        waveTable.load("raw/kick.raw");
-
+        waveTable.reset();
         envMod.noteOn();
         lfoMod.phaseModulation(0);
         env.noteOn();
-        // raw.play("raw/kick.raw");
     }
 
     void noteOff() {
         env.noteOff();
         envMod.noteOff();
-        // raw.stop();
     }
 };
 
