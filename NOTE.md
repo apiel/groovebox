@@ -11,6 +11,10 @@
 
 # chaining
 
+# sequencer
+
+- send gate to gpio
+
 # sequence live edit
 
 # Pattern
@@ -26,13 +30,7 @@
 
 # synth
 
-- need to fix patch modulation
-- should it be modular, maybe not really just to be able to activate deactivate module or choose
-    - choose modulation: lfo, env, or custom modulation?
-    - waveform, mutliple wave form, wavetable, sample
-    - choose filter: env, pass filter, custom ?
-- give possibility to deactivate envelop and have a continous sound...
-
+- save synth settings
 - save synth into a raw wavetable
 
 # Links
