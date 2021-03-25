@@ -29,9 +29,10 @@ const char* getWave(byte w) {
                 return "Tri var";
         }
     }
+    IO_AudioSynthWaveListRaw* r = r->getInstance();
     w = w - WAVEFORM_COUNT;
-    if (w < synth[currentSynth].wave.rawWaveCount) {
-        return synth[currentSynth].wave.wavetableName[w];
+    if (w < r->rawWaveCount) {
+        return r->wavetableName[w];
     }
     return "unknown";
 }

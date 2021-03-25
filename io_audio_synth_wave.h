@@ -17,11 +17,48 @@
 #define WAVETABLE_NAME_LEN 20
 #define WAVETABLE_FOLDER "raw/"
 
+class IO_AudioSynthWaveListRaw {
+   protected:
+    static IO_AudioSynthWaveListRaw* instance;
+
+    IO_AudioSynthWaveListRaw() { init(); }
+
+    void init() {
+        rawWaveCount = 0;
+
+        File root = SD.open(WAVETABLE_FOLDER);
+        if (root) {
+            while (true) {
+                File entry = root.openNextFile();
+                if (!entry) {
+                    break;
+                }
+                if (!entry.isDirectory()) {
+                    snprintf(wavetableName[rawWaveCount], WAVETABLE_NAME_LEN,
+                             entry.name());
+                    rawWaveCount++;
+                }
+                entry.close();
+            }
+            root.close();
+        }
+    }
+
+   public:
+    static IO_AudioSynthWaveListRaw* getInstance() {
+        if (!instance) instance = new IO_AudioSynthWaveListRaw;
+        return instance;
+    }
+
+    byte rawWaveCount = 0;
+    char wavetableName[WAVETABLE_COUNT][WAVETABLE_NAME_LEN];
+};
+
+IO_AudioSynthWaveListRaw *IO_AudioSynthWaveListRaw::instance = 0;
+
 class IO_AudioSynthWave : public AudioDumb {
    protected:
    public:
-    byte rawWaveCount = 0;
-    char wavetableName[WAVETABLE_COUNT][WAVETABLE_NAME_LEN];
     char wavetableFullPath[WAVETABLE_NAME_LEN + 10];
 
     AudioSynthWaveformModulated waveform;
@@ -84,35 +121,19 @@ class IO_AudioSynthWave : public AudioDumb {
     }
 
     void init() {
-        rawWaveCount = 0;
-
-        File root = SD.open(WAVETABLE_FOLDER);
-        if (root) {
-            while (true) {
-                File entry = root.openNextFile();
-                if (!entry) {
-                    break;
-                }
-                if (!entry.isDirectory()) {
-                    snprintf(wavetableName[rawWaveCount], WAVETABLE_NAME_LEN,
-                             entry.name());
-                    rawWaveCount++;
-                }
-                entry.close();
-            }
-            root.close();
-        }
+        IO_AudioSynthWaveListRaw::getInstance();
         applyCord();
     }
 
     void setNextWaveform(int8_t direction) {
+        IO_AudioSynthWaveListRaw* r = r->getInstance();
         currentWaveform =
-            mod(currentWaveform + direction, WAVEFORM_COUNT + rawWaveCount);
+            mod(currentWaveform + direction, WAVEFORM_COUNT + r->rawWaveCount);
         if (currentWaveform < WAVEFORM_COUNT) {
             waveform.begin(currentWaveform);
         } else {
             sprintf(wavetableFullPath, "%s%s", WAVETABLE_FOLDER,
-                    wavetableName[currentWaveform - WAVEFORM_COUNT]);
+                    r->wavetableName[currentWaveform - WAVEFORM_COUNT]);
             waveTable.load(wavetableFullPath);
         }
         applyCord();
