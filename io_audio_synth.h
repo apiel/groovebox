@@ -8,6 +8,7 @@
 #include "io_audio_synth_modulation.h"
 #include "io_audio_synth_wave.h"
 #include "io_util.h"
+#include "note.h"
 
 #define FILTER_TYPE_COUNT 3
 #define AUDIO_SYNTH_MOD 3
@@ -62,7 +63,7 @@ class IO_AudioSynth : public AudioDumb {
         filter.octaveControl(filterOctaveControl);
     }
 
-    void init() { 
+    void init() {
         wave.init();
         modulation.init();
     }
@@ -129,8 +130,15 @@ class IO_AudioSynth : public AudioDumb {
         env.sustain(sustainLevel);
     }
 
-    void noteOn() {
-        wave.waveTable.reset();
+    void noteOn() { noteOn(_C4, 127); }
+
+    void noteOn(byte note, byte velocity) {
+        wave.waveform.amplitude(wave.amplitude * velocity / 127);
+        wave.waveform.frequency(wave.frequency + NOTE_FREQ[_C4] -
+                                NOTE_FREQ[note]);
+        wave.waveTable.reset()
+            ->amplitude(wave.amplitude * velocity / 127)
+            ->frequency(wave.frequency + NOTE_FREQ[_C4] - NOTE_FREQ[note]);
         modulation.lfoMod.phase(0.0);
         modulation.envMod.noteOn();
         env.noteOn();
