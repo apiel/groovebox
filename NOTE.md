@@ -1,3 +1,16 @@
+# synth
+
+- modulation
+    - create a random drop modulation
+    - on each phase could change freq start...
+
+- save synth settings
+- save synth into a raw wavetable
+
+# samples
+
+- ?
+
 # keyboard
 
 - select input and output
@@ -27,11 +40,6 @@
         - there could be an auto save? and in that case it is reflected...
     - when we change of pattern, should it ask for save
 - assign pattern to output
-
-# synth
-
-- save synth settings
-- save synth into a raw wavetable
 
 # Links
 
