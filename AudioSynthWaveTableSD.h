@@ -6,7 +6,7 @@
 
 #include "note.h"
 
-template <uint16_t MAX_TABLE_SIZE = 24000>
+template <uint16_t MAX_TABLE_SIZE = 12000>
 class AudioSynthWaveTableSD : public AudioStream {
    public:
     AudioSynthWaveTableSD()

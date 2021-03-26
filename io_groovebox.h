@@ -35,9 +35,25 @@ void ioGrooveboxInit() {
     displayUpdate();
 }
 
+unsigned long last_time = millis();
 void ioGrooveboxLoop() {
     midiLoop();
     sequencerLoop();
+
+    if (true) {
+        if (millis() - last_time >= 5000) {
+            Serial.print("Proc = ");
+            Serial.print(AudioProcessorUsage());
+            Serial.print(" (");
+            Serial.print(AudioProcessorUsageMax());
+            Serial.print("),  Mem = ");
+            Serial.print(AudioMemoryUsage());
+            Serial.print(" (");
+            Serial.print(AudioMemoryUsageMax());
+            Serial.println(")");
+            last_time = millis();
+        }
+    }
 }
 
 #endif
