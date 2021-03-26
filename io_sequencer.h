@@ -6,6 +6,7 @@
 
 #include "Pattern.h"
 #include "Sequence.h"
+#include "io_audio.h"
 #include "io_midi_core.h"
 #include "io_sequence.h"
 #include "io_util.h"
@@ -34,6 +35,12 @@ void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
             noteOn(output, note, velocity);
         } else {
             noteOff(output, note, velocity);
+        }
+    } else if (output >= 17 && output <= 20) {
+        if (type == SEQ_NOTE_ON) {
+            synth[output - 16].noteOn();
+        } else {
+            synth[output - 16].noteOff();
         }
     }
 }

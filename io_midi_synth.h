@@ -7,7 +7,10 @@
 
 void synthNoteOnHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
-        if (note == 22 || note == 46) {
+        byte key = getItemKey(note);
+        if (key != 255) {
+            currentSynth = key;
+        } else if (note == 22 || note == 46) {
             synth[currentSynth].noteOn();
         } else if (note == 20) {
             synth[currentSynth].toggleAdsr();

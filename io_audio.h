@@ -21,6 +21,9 @@ byte currentSynth = 0;
 void audioInit() {
     AudioMemory(25);
 
+// should it be 8 synth wavetable + waveform
+// or 6 wavetable and 2 waveform
+// or 4 synth wavetable + waveform and 2 waveform and 2 sd wav samples
     synth[0].init();
     synth[1].init();
     synth[2].init();
