@@ -52,6 +52,31 @@ void synthControlChangeHandler(byte channel, byte knob, int8_t direction) {
             synth[currentSynth].setFilterOctaveControl(direction);
         } else if (knob == 14) {
             synth[currentSynth].setCurrentFilter(direction);
+        } else if (knob == 15) {
+            if (synth[currentSynth].modulation.currentModulation == MOD_ENV) {
+                synth[currentSynth].modulation.setModAttack(direction);
+            }
+        } else if (knob == 16) {
+            if (synth[currentSynth].modulation.currentModulation == MOD_ENV) {
+                synth[currentSynth].modulation.setModDecay(direction);
+            } else if (synth[currentSynth].modulation.currentModulation ==
+                       MOD_LFO) {
+                synth[currentSynth].modulation.setFrequency(direction);
+            }
+        } else if (knob == 17) {
+            if (synth[currentSynth].modulation.currentModulation == MOD_ENV) {
+                synth[currentSynth].modulation.setModSustain(direction);
+            } else if (synth[currentSynth].modulation.currentModulation ==
+                       MOD_LFO) {
+                synth[currentSynth].modulation.setAmplitude(direction);
+            }
+        } else if (knob == 0) { // 0 for 18
+            if (synth[currentSynth].modulation.currentModulation == MOD_ENV) {
+                synth[currentSynth].modulation.setModRelease(direction);
+            } else if (synth[currentSynth].modulation.currentModulation ==
+                       MOD_LFO) {
+                synth[currentSynth].modulation.setNextWaveform(direction);
+            }
         }
     }
 }

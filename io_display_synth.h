@@ -75,13 +75,13 @@ void displaySynth(Adafruit_SSD1306* d) {
               synth[currentSynth].filterOctaveControl);
 
     addToCursor(d, 0, 4);
-    if (synth[currentSynth].modulation.currentModulation == 1) {
+    if (synth[currentSynth].modulation.currentModulation == MOD_ENV) {
         d->printf("mod %d|%d|%d%%|%d\n",
                   (int)synth[currentSynth].modulation.modAttackMs,
                   (int)synth[currentSynth].modulation.modDecayMs,
                   (int)(synth[currentSynth].modulation.modSustainLevel * 100),
                   (int)synth[currentSynth].modulation.modReleaseMs);
-    } else if (synth[currentSynth].modulation.currentModulation == 2) {
+    } else if (synth[currentSynth].modulation.currentModulation == MOD_LFO) {
         d->printf("Lfo %.1fHz %d%% %s\n",
                   synth[currentSynth].modulation.lfoFrequency,
                   (int)(synth[currentSynth].modulation.lfoAmplitude * 100),

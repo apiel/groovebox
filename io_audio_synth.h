@@ -30,7 +30,7 @@ class IO_AudioSynth : public AudioDumb {
 
     float filterFrequency = 1000;
     float filterOctaveControl = 1.0;
-    float filterResonance = 0.707;
+    float filterResonance = 0.7;
     byte currentFilter = 0;
 
     AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];

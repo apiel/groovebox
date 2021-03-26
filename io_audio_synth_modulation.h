@@ -7,7 +7,9 @@
 #include "audio_dumb.h"
 #include "io_util.h"
 
-#define AUDIO_SYNTH_MOD 3
+#define LFO_WAVEFORM_COUNT 9
+
+enum { MOD_NONE, MOD_ENV, MOD_LFO, MOD_COUNT };
 
 class IO_AudioSynthModulation : public AudioDumb {
    protected:
@@ -19,7 +21,7 @@ class IO_AudioSynthModulation : public AudioDumb {
     byte currentModulation = 0;
     float modAttackMs = 100.0;
     float modDecayMs = 50.0;
-    float modSustainLevel = 70.0;
+    float modSustainLevel = 0.7;
     float modReleaseMs = 50.0;
 
     float lfoFrequency = 1.0;
@@ -53,7 +55,7 @@ class IO_AudioSynthModulation : public AudioDumb {
     void init() { applyCord(); }
 
     void setModulation(int8_t direction) {
-        currentModulation = mod(currentModulation + direction, AUDIO_SYNTH_MOD);
+        currentModulation = mod(currentModulation + direction, MOD_COUNT);
         applyCord();
     }
 
@@ -61,10 +63,10 @@ class IO_AudioSynthModulation : public AudioDumb {
         patchCordLfoToWave->disconnect();
         patchCordDcToEnvMod->disconnect();
         patchCordEnvModToWave->disconnect();
-        if (currentModulation == 1) {
+        if (currentModulation == MOD_ENV) {
             patchCordDcToEnvMod->connect();
             patchCordEnvModToWave->connect();
-        } else if (currentModulation == 2) {
+        } else if (currentModulation == MOD_LFO) {
             patchCordLfoToWave->connect();
         }
     }
@@ -79,14 +81,30 @@ class IO_AudioSynthModulation : public AudioDumb {
         envMod.decay(modDecayMs);
     }
 
+    void setModSustain(int8_t direction) {
+        modSustainLevel = pctAdd(modSustainLevel, direction);
+        envMod.sustain(modSustainLevel);
+    }
+
     void setModRelease(int8_t direction) {
         modReleaseMs = constrain(modReleaseMs + direction, 0, 11880);
         envMod.release(modReleaseMs);
     }
 
-    void setModSustain(int8_t direction) {
-        modSustainLevel = pctAdd(modSustainLevel, direction);
-        envMod.sustain(modSustainLevel);
+    void setNextWaveform(int8_t direction) {
+        lfoWave = mod(lfoWave + direction, LFO_WAVEFORM_COUNT);
+        lfoMod.begin(lfoWave);
+    }
+
+    void setFrequency(int8_t direction) {
+        lfoFrequency =
+            constrain(lfoFrequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
+        lfoMod.frequency(lfoFrequency);
+    }
+
+    void setAmplitude(int8_t direction) {
+        lfoAmplitude = pctAdd(lfoAmplitude, direction);
+        lfoMod.amplitude(lfoAmplitude);
     }
 };
 

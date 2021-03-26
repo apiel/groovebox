@@ -69,14 +69,16 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
 }
 
 void controlChangeHandler(byte channel, byte control, byte value) {
+    byte knob = control % KNOB_COUNT;
     Serial.print("Control Change, ch=");
     Serial.print(channel, DEC);
     Serial.print(", control=");
     Serial.print(control, DEC);
+    Serial.print(", knob=");
+    Serial.print(knob, DEC);
     Serial.print(", value=");
     Serial.println(value, DEC);
 
-    byte knob = control % KNOB_COUNT;
     int8_t direction = getKnobDirection(knob, value);
     if (currentView == VIEW_PATTERN) {
         patternControlChangeHandler(channel, knob, direction);
