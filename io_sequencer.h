@@ -38,9 +38,9 @@ void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
         }
     } else if (output >= 17 && output <= 20) {
         if (type == SEQ_NOTE_ON) {
-            synth[output - 16].noteOn();
+            synth[output - 17].noteOn();
         } else {
-            synth[output - 16].noteOff();
+            synth[output - 17].noteOff();
         }
     }
 }

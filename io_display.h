@@ -8,9 +8,9 @@
 #include <Wire.h>
 
 #include "io_audio.h"
-#include "io_display_router.h"
 #include "io_display_main.h"
 #include "io_display_pattern.h"
+#include "io_display_router.h"
 #include "io_display_sequences.h"
 #include "io_display_synth.h"
 #include "io_display_util.h"
@@ -38,19 +38,34 @@ void displayInit() {
     display.display();
 }
 
+unsigned long lastDisplayUpdate = millis();
+bool needDisplayUpdate = false;
+
 void displayUpdate() {
-    if (currentView == VIEW_ROUTER) {
-        displayRouter(&display);
-    } else if (currentView == VIEW_PATTERN) {
-        displayPattern(&display);
-    } else if (currentView == VIEW_SEQUENCES) {
-        displaySequences(&display);
-    } else if (currentView == VIEW_MAIN) {
-        displayMain(&display);
+    if (millis() - lastDisplayUpdate >= 50) {
+        needDisplayUpdate = false;
+        lastDisplayUpdate = millis();
+        if (currentView == VIEW_ROUTER) {
+            displayRouter(&display);
+        } else if (currentView == VIEW_PATTERN) {
+            displayPattern(&display);
+        } else if (currentView == VIEW_SEQUENCES) {
+            displaySequences(&display);
+        } else if (currentView == VIEW_MAIN) {
+            displayMain(&display);
+        } else {
+            displaySynth(&display);
+        }
+        display.display();
     } else {
-        displaySynth(&display);
+        needDisplayUpdate = true;
     }
-    display.display();
+}
+
+void displayLoop() {
+    if (needDisplayUpdate) {
+        displayUpdate();
+    }
 }
 
 #endif

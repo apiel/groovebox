@@ -39,6 +39,7 @@ unsigned long last_time = millis();
 void ioGrooveboxLoop() {
     midiLoop();
     sequencerLoop();
+    displayLoop();
 
     if (true) {
         if (millis() - last_time >= 5000) {
