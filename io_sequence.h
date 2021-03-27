@@ -11,9 +11,9 @@
 
 #define SEQUENCE_COUNT 32  // should this be define by screen size?
 #define SEQUENCE_OUTPUT_COUNT \
-    17 + SYNTH_COUNT          // 0 + 16ch // need + SYNTH_COUNT + ...
-#define SEQUENCE_ROW_COUNT 4  // should this be define by screen size?
-#define SEQUENCE_PER_ROW 8    // should this be define by screen size?
+    17 + SYNTH_COUNT + WAV_COUNT  // 0 + 16ch // need + SYNTH_COUNT + ...
+#define SEQUENCE_ROW_COUNT 4      // should this be define by screen size?
+#define SEQUENCE_PER_ROW 8        // should this be define by screen size?
 
 byte currentSequence = 0;
 byte sequenceOutput = 0;

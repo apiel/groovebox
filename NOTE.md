@@ -7,6 +7,8 @@
 - save synth settings
 - save synth into a raw wavetable
 
+- arbitrary wave, load from file
+
 # samples
 
 - ?

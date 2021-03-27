@@ -28,19 +28,27 @@ void setTempo(int8_t direction) {
 }
 
 void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
-    // Serial.printf("seq next: %s %d %d %d\n", type == SEQ_NOTE_ON ? "on" :
-    // "off", output, note, velocity);
+    // Serial.printf("seq next: %s %d %d %d\n", type == SEQ_NOTE_ON ? "on" : "off",
+    //               output, note, velocity);
     if (output > 0 && output <= 16) {
         if (type == SEQ_NOTE_ON) {
             noteOn(output, note, velocity);
         } else {
             noteOff(output, note, velocity);
         }
-    } else if (output >= 17 && output <= 20) {
+    } else if (output >= 17 && output <= 22) {
         if (type == SEQ_NOTE_ON) {
             synth[output - 17].noteOn(note, velocity);
         } else {
             synth[output - 17].noteOff();
+        }
+    } else if (output == 23) {
+        if (type == SEQ_NOTE_ON) {
+            wav[0].play(note);
+        }
+    } else if (output == 24) {
+        if (type == SEQ_NOTE_ON) {
+            wav[1].play(note);
         }
     }
 }
