@@ -9,11 +9,13 @@
 #include "io_audio.h"
 #include "io_util.h"
 
+#define MIDI_CHANNEL_COUNT 16
 #define SEQUENCE_COUNT 32  // should this be define by screen size?
 #define SEQUENCE_OUTPUT_COUNT \
-    17 + SYNTH_COUNT + WAV_COUNT  // 0 + 16ch // need + SYNTH_COUNT + ...
-#define SEQUENCE_ROW_COUNT 4      // should this be define by screen size?
-#define SEQUENCE_PER_ROW 8        // should this be define by screen size?
+    1 + MIDI_CHANNEL_COUNT +  \
+        SYNTH_COUNT           // 0 + 16ch // need + SYNTH_COUNT + ...
+#define SEQUENCE_ROW_COUNT 4  // should this be define by screen size?
+#define SEQUENCE_PER_ROW 8    // should this be define by screen size?
 
 byte currentSequence = 0;
 byte sequenceOutput = 0;
@@ -29,6 +31,21 @@ void setSequenceOutput(int8_t direction) {
 
 void setSequenceRow(int8_t direction) {
     currentSeqRow = mod(currentSeqRow + direction, SEQUENCE_ROW_COUNT);
+}
+
+bool isSynthOutput(byte output) { return output > 0 && output <= SYNTH_COUNT; }
+
+bool isMidiOutput(byte output) {
+    return output > SYNTH_COUNT && output <= SYNTH_COUNT + MIDI_CHANNEL_COUNT;
+}
+byte getMidiChannel(byte output) {
+    // midi channel start at 1
+    return output - SYNTH_COUNT;
+}
+
+byte getSynthChannel(byte output) {
+    // synth channel start at 0
+    return output - 1;
 }
 
 #endif

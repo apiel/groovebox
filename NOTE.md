@@ -9,9 +9,7 @@
 
 - arbitrary wave, load from file
 
-# samples
-
-- ?
+- think about a 3 voice synth, with a dedicated osc per voice
 
 # keyboard
 
@@ -29,6 +27,9 @@
 # sequencer
 
 - send gate to gpio
+- save sequencer
+- multiple sequencer switch
+- load sequencer
 
 # sequence live edit
 
@@ -42,6 +43,10 @@
         - there could be an auto save? and in that case it is reflected...
     - when we change of pattern, should it ask for save
 - assign pattern to output
+
+# samples
+
+- dont use wav sample, too much trouble
 
 # Links
 

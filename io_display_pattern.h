@@ -44,7 +44,7 @@ void displayPattern(Adafruit_SSD1306* d) {
 
     Step* step = &pattern.steps[currentStepSelection];
     d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
-             step->slide ? 1 : 0);
+              step->slide ? 1 : 0);
 
     setSmallFont(d);
     for (byte pos = 0; pos < STEP_COUNT; pos++) {
@@ -52,7 +52,15 @@ void displayPattern(Adafruit_SSD1306* d) {
     }
     resetFont(d);
 
-    dprintxy(d, 0, 7, "Pos: %d Out: %d", currentSequence + 1, sequenceOutput);
+    if (sequenceOutput == 0) {
+        dprintxy(d, 0, 7, "Pos: %d Out: none", currentSequence + 1);
+    } else {
+        bool isMidi = isMidiOutput(sequenceOutput);
+        dprintxy(d, 0, 7, "Pos: %d Out: %s %d", currentSequence + 1,
+                 isMidi ? "midi" : "synth",
+                 isMidi ? getMidiChannel(sequenceOutput)
+                        : getSynthChannel(sequenceOutput));
+    }
 }
 
 #endif

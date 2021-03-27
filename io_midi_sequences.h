@@ -23,7 +23,7 @@ void sequencesNoteOffHandler(byte channel, byte note, byte velocity) {
 
 void sequencesControlChangeHandler(byte channel, byte knob, int8_t direction) {
     if (channel == 11) {
-        if (knob == 1) {
+        if (knob == 8) {
             setSequenceRow(direction);
         }
     }
