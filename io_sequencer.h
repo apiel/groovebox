@@ -56,11 +56,11 @@ void sequencerLoad() {
             while (file.available() && assignStorageValues(&file)) {
                 byte output = (byte)storageValues[2];
                 if (output) {
-                    Pattern* ptrPattern = &patterns[(byte)storageValues[1]];
-                    if (ptrPattern) {
-                        byte seqPos = (byte)storageValues[0];
-                        sequences[seqPos].set(ptrPattern, output);
-                    }
+                    byte patternPos = (byte)storageValues[1];
+                    byte seqPos = (byte)storageValues[0];
+                    loadPattern(patternPos);
+                    Pattern* ptrPattern = &patterns[patternPos];
+                    sequences[seqPos].set(ptrPattern, output);
                 }
             }
             file.close();

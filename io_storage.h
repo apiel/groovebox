@@ -24,7 +24,6 @@ bool assignStorageValues(File* file) {
             i++;
             pos = -1;
             if (c == '\n') {
-                Serial.print('\n');
                 return true;
             }
         }

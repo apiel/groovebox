@@ -16,6 +16,7 @@ void sequencesNoteOnHandler(byte channel, byte note, byte velocity) {
         } else if (note == 23 || note == 47) {
             sequencerSave();
         } else if (note == 22) {
+            // to be removed
             sequencerLoad();
         }
     }
