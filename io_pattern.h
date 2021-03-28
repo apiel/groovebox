@@ -17,20 +17,21 @@ char patternPath[PATTERN_PATH_LEN];
 byte currentPattern = 0;
 byte currentStepSelection = 0;
 
-void setPatternPath() {
-    snprintf(patternPath, PATTERN_PATH_LEN, "pattern/%03d.io", currentPattern);
+void setPatternPath(byte pos) {
+    snprintf(patternPath, PATTERN_PATH_LEN, "pattern/%03d.io", pos);
     Serial.println(patternPath);
 }
 
-void loadPattern() {
+void loadPattern(byte patternPos) {
     pattern.clear();
     Serial.println("loadPattern.");
-    setPatternPath();
+    setPatternPath(patternPos);
     // Serial.printf("pattern file: %s\n", patternPath);
     if (sdAvailable && SD.exists(patternPath)) {
         File file = SD.open(patternPath);
         if (file) {
             String name = file.readStringUntil('\n');
+            pattern.pos = patternPos;
             pattern.setName(name.c_str());
             // pattern.stepCount = 0;
             while (file.available() && assignStorageValues(&file)) {
@@ -50,6 +51,10 @@ void loadPattern() {
     Serial.println("No file found.");
     pattern.setDefaultName();
     // pattern.print();
+}
+
+void loadPattern() {
+    loadPattern(currentPattern);
 }
 
 void patternInit() { loadPattern(); }
@@ -85,10 +90,10 @@ void setStepVelocity(int8_t direction) {
     pStep->set(constrain(pStep->velocity + direction, 0, 127));
 }
 
-bool savePattern() {
+bool savePattern(byte patternPos) {
     Serial.println("savePattern");
     if (sdAvailable) {
-        setPatternPath();
+        setPatternPath(patternPos);
         // SD.remove(patternPath);
         File file = SD.open(patternPath, FILE_WRITE);
 
@@ -111,6 +116,10 @@ bool savePattern() {
     }
     Serial.println("- failed to open file for writing");
     return false;
+}
+
+bool savePattern() {
+    savePattern(currentPattern);
 }
 
 #endif

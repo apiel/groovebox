@@ -29,7 +29,9 @@
         "initializer_list": "cpp",
         "cstdarg": "cpp",
         "algorithm": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "random": "cpp",
+        "streambuf": "cpp"
     },
     "emeraldwalk.runonsave": {
         "commands": [

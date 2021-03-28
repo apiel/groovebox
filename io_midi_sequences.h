@@ -5,6 +5,7 @@
 
 #include "io_midi_util.h"
 #include "io_sequence.h"
+#include "io_sequencer.h"
 
 void sequencesNoteOnHandler(byte channel, byte note, byte velocity) {
     if (channel == 11) {
@@ -12,6 +13,8 @@ void sequencesNoteOnHandler(byte channel, byte note, byte velocity) {
         if (pos < 255) {
             pos += currentSeqRow * SEQUENCE_PER_ROW;
             sequences[pos].toggle();
+        } else if (note == 23 || note == 47) {
+            sequencerSave();
         }
     }
 }

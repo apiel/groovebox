@@ -9,6 +9,8 @@
 #include "io_audio.h"
 #include "io_midi_core.h"
 #include "io_sequence.h"
+#include "io_state.h"
+#include "io_storage.h"
 #include "io_util.h"
 
 // 4 ♬ ♬ step per beat
@@ -59,6 +61,27 @@ void sequencerLoop() {
             sequences[pos].next();
         }
     }
+}
+
+bool sequencerSave() {
+    Serial.println("sequencerSave");
+    if (sdAvailable) {
+        File file = SD.open("sequencer/1.io", FILE_WRITE);
+        if (file) {
+            file.seek(0);
+            for (byte pos = 0; pos < SEQUENCE_COUNT; pos++) {
+                sprintf(storageBuffer, "%d %d %d %d\n", (int)pos,
+                        (int)sequences[pos].pattern.pos,
+                        (int)sequences[pos].output,
+                        (int)sequences[pos].active ? 1 : 0);
+                file.print(storageBuffer);
+            }
+            file.close();
+            return true;
+        }
+    }
+    Serial.println("- failed to open file for writing");
+    return false;
 }
 
 #endif

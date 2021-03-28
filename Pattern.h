@@ -8,6 +8,7 @@
 
 class Pattern {
    public:
+    byte pos;
     byte stepCount = MAX_STEPS_IN_PATTERN;
     char name[PATTERN_NAME_SIZE];
     Step steps[MAX_STEPS_IN_PATTERN];
