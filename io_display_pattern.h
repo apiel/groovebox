@@ -40,15 +40,15 @@ void displayPattern(Adafruit_SSD1306* d) {
     d->clearDisplay();
     d->setCursor(0, 0);
 
-    d->printf("%03d %s\n", currentPattern, pattern.name);
+    d->printf("%03d %s\n", currentPattern, pattern->name);
 
-    Step* step = &pattern.steps[currentStepSelection];
+    Step* step = &pattern->steps[currentStepSelection];
     d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
               step->slide ? 1 : 0);
 
     setSmallFont(d);
     for (byte pos = 0; pos < STEP_COUNT; pos++) {
-        displayStep(d, &pattern, pos);
+        displayStep(d, pattern, pos);
     }
     resetFont(d);
 

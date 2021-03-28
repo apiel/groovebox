@@ -15,6 +15,8 @@ void sequencesNoteOnHandler(byte channel, byte note, byte velocity) {
             sequences[pos].toggle();
         } else if (note == 23 || note == 47) {
             sequencerSave();
+        } else if (note == 22) {
+            sequencerLoad();
         }
     }
 }

@@ -17,6 +17,7 @@ class Pattern {
 
     Pattern* set(Pattern* p) {
         stepCount = p->stepCount;
+        pos = p->pos;
         setName(p->name);
         for (byte pos = 0; pos < MAX_STEPS_IN_PATTERN; pos++) {
             steps[pos].set(&p->steps[pos]);

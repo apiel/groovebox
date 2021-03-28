@@ -8,6 +8,7 @@
 #include "Sequence.h"
 #include "io_audio.h"
 #include "io_midi_core.h"
+#include "io_pattern_storage.h"
 #include "io_sequence.h"
 #include "io_state.h"
 #include "io_storage.h"
@@ -47,11 +48,29 @@ void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
     }
 }
 
+void sequencerLoad() {
+    Serial.println("sequencerLoad.");
+    if (sdAvailable && SD.exists("sequencer/00.io")) {
+        File file = SD.open("sequencer/00.io");
+        if (file) {
+            while (file.available() && assignStorageValues(&file)) {
+                Pattern* ptrPattern = &patterns[(byte)storageValues[1]];
+                if (ptrPattern) {
+                    byte seqPos = (byte)storageValues[0];
+                    sequences[seqPos].set(ptrPattern, (byte)storageValues[2]);
+                }
+            }
+            file.close();
+        }
+    }
+}
+
 void sequencerInit() {
     setTempo(0);
     for (byte pos = 0; pos < SEQUENCE_COUNT; pos++) {
         sequences[pos].setNextHandler(sequencerNextHandler);
     }
+    sequencerLoad();
 }
 
 void sequencerLoop() {
@@ -66,7 +85,7 @@ void sequencerLoop() {
 bool sequencerSave() {
     Serial.println("sequencerSave");
     if (sdAvailable) {
-        File file = SD.open("sequencer/1.io", FILE_WRITE);
+        File file = SD.open("sequencer/00.io", FILE_WRITE);
         if (file) {
             file.seek(0);
             for (byte pos = 0; pos < SEQUENCE_COUNT; pos++) {
@@ -74,6 +93,7 @@ bool sequencerSave() {
                         (int)sequences[pos].pattern.pos,
                         (int)sequences[pos].output,
                         (int)sequences[pos].active ? 1 : 0);
+                Serial.print(storageBuffer);
                 file.print(storageBuffer);
             }
             file.close();
