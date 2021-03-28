@@ -18,17 +18,17 @@ void loadPattern() {
     loadPattern(currentPattern);
 }
 
-void patternInit() { loadPattern(); }
-
-void setSequence(bool start = false) {
-    sequences[currentSequence].set(pattern, sequenceOutput);
-    sequences[currentSequence].activate(start);
-}
-
 void setCurrentPattern(int8_t direction) {
     currentPattern += direction;
     loadPattern();
     pattern = &patterns[currentPattern];
+}
+
+void patternInit() { setCurrentPattern(0); }
+
+void setSequence(bool start = false) {
+    sequences[currentSequence].set(pattern, sequenceOutput);
+    sequences[currentSequence].activate(start);
 }
 
 void setCurrentStepSelection(int8_t direction) {

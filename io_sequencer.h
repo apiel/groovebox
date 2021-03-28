@@ -54,10 +54,13 @@ void sequencerLoad() {
         File file = SD.open("sequencer/00.io");
         if (file) {
             while (file.available() && assignStorageValues(&file)) {
-                Pattern* ptrPattern = &patterns[(byte)storageValues[1]];
-                if (ptrPattern) {
-                    byte seqPos = (byte)storageValues[0];
-                    sequences[seqPos].set(ptrPattern, (byte)storageValues[2]);
+                byte output = (byte)storageValues[2];
+                if (output) {
+                    Pattern* ptrPattern = &patterns[(byte)storageValues[1]];
+                    if (ptrPattern) {
+                        byte seqPos = (byte)storageValues[0];
+                        sequences[seqPos].set(ptrPattern, output);
+                    }
                 }
             }
             file.close();
