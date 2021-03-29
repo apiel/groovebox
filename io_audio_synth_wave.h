@@ -54,7 +54,7 @@ class IO_AudioSynthWaveListRaw {
     char wavetableName[WAVETABLE_COUNT][WAVETABLE_NAME_LEN];
 };
 
-IO_AudioSynthWaveListRaw *IO_AudioSynthWaveListRaw::instance = 0;
+IO_AudioSynthWaveListRaw* IO_AudioSynthWaveListRaw::instance = 0;
 
 class IO_AudioSynthWave : public AudioDumb {
    protected:

@@ -5,34 +5,32 @@
 #include <Audio.h>
 
 #include "io_audio_synth.h"
+#include "io_audio_synth_storage.h"
 #include "io_audio_wav.h"
-
-#define SYNTH_COUNT 6
 
 AudioOutputMQS audioOut;
 
-IO_AudioSynth synth[SYNTH_COUNT];
-AudioConnection*
-    patchCordSynth[SYNTH_COUNT];
+AudioConnection* patchCordSynth[SYNTH_COUNT];
 AudioMixer4 mixer[3];
 AudioConnection* patchCordMixer[3];
 
-byte currentSynth = 0;
+void initSynth(byte synthPos) {
+    synth[synthPos].init();
+    loadSynth(synthPos);
+}
 
 void audioInit() {
     AudioMemory(25);
 
-// should it be 8 synth wavetable + waveform
-// or 6 wavetable and 2 waveform
-// or 4 synth wavetable + waveform and 2 waveform and 2 sd wav samples
-    synth[0].init();
-    synth[1].init();
-    synth[2].init();
-    synth[3].init();
-    synth[4].init();
-    synth[5].init();
-    // synth[6].init();
-    // synth[7].init();
+    // should it be 8 synth wavetable + waveform
+    // or 6 wavetable and 2 waveform
+    // or 4 synth wavetable + waveform and 2 waveform and 2 sd wav samples
+    initSynth(0);
+    initSynth(1);
+    initSynth(2);
+    initSynth(3);
+    initSynth(4);
+    initSynth(5);
 
     patchCordSynth[0] = new AudioConnection(synth[0], audioOut);
 

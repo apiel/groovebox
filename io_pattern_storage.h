@@ -10,9 +10,7 @@
 #define PATTERN_COUNT 256
 Pattern patterns[PATTERN_COUNT];
 
-void setPatternPath(byte pos) {
-    setFilePath("pattern/%03d.io", pos);
-}
+void setPatternPath(byte pos) { setFilePath("pattern/%03d.io", pos); }
 
 void loadPattern(byte patternPos) {
     patterns[patternPos].clear();
@@ -30,7 +28,7 @@ void loadPattern(byte patternPos) {
                 patterns[patternPos].add(
                     (byte)storageValues[0], (byte)storageValues[1],
                     (byte)storageValues[2], (byte)storageValues[3],
-                    storageValues[4] == 1);
+                    i2b(storageValues[4]));
                 // maybe it would be better to read the step count from a var in
                 // the file
                 // pattern.stepCount =
@@ -62,7 +60,7 @@ bool savePattern(byte patternPos) {
                 Step* step = &patterns[patternPos].steps[pos];
                 sprintf(storageBuffer, "%d %d %d %d %d\n", (int)pos,
                         (int)step->note, (int)step->duration,
-                        (int)step->velocity, step->slide ? 1 : 0);
+                        (int)step->velocity, b2i(step->slide));
                 file.print(storageBuffer);
             }
             file.close();

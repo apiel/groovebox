@@ -12,7 +12,7 @@ char storageBuffer[STORAGE_BUFFER_SIZE];
 int storageValues[STORAGE_VALUES_SIZE];
 char filePath[FILE_PATH_LEN];
 
-void setFilePath(const char * path, byte pos) {
+void setFilePath(const char* path, byte pos) {
     snprintf(filePath, FILE_PATH_LEN, path, pos);
     Serial.println(filePath);
 }
@@ -37,5 +37,10 @@ bool assignStorageValues(File* file) {
     }
     return false;
 }
+
+int f2i(float val) { return (int)(val * 100); }
+float i2f(int val) { return (float)(val * 0.01); }
+int b2i(bool val) { return val ? 1 : 0; }
+int i2b(int val) { return val == 1; }
 
 #endif
