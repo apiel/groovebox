@@ -8,14 +8,10 @@
 #include "io_storage.h"
 
 #define PATTERN_COUNT 256
-#define PATTERN_PATH_LEN 16
-
 Pattern patterns[PATTERN_COUNT];
-char patternPath[PATTERN_PATH_LEN];
 
 void setPatternPath(byte pos) {
-    snprintf(patternPath, PATTERN_PATH_LEN, "pattern/%03d.io", pos);
-    Serial.println(patternPath);
+    setFilePath("pattern/%03d.io", pos);
 }
 
 void loadPattern(byte patternPos) {
@@ -23,8 +19,8 @@ void loadPattern(byte patternPos) {
     Serial.println("loadPattern.");
     setPatternPath(patternPos);
     // Serial.printf("pattern file: %s\n", patternPath);
-    if (sdAvailable && SD.exists(patternPath)) {
-        File file = SD.open(patternPath);
+    if (sdAvailable && SD.exists(filePath)) {
+        File file = SD.open(filePath);
         if (file) {
             String name = file.readStringUntil('\n');
             patterns[patternPos].pos = patternPos;
@@ -54,7 +50,7 @@ bool savePattern(byte patternPos) {
     if (sdAvailable) {
         setPatternPath(patternPos);
         // SD.remove(patternPath);
-        File file = SD.open(patternPath, FILE_WRITE);
+        File file = SD.open(filePath, FILE_WRITE);
 
         if (file) {
             file.seek(0);

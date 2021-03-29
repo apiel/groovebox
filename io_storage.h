@@ -6,9 +6,16 @@
 
 #define STORAGE_BUFFER_SIZE 32
 #define STORAGE_VALUES_SIZE 20
+#define FILE_PATH_LEN 255
 
 char storageBuffer[STORAGE_BUFFER_SIZE];
 int storageValues[STORAGE_VALUES_SIZE];
+char filePath[FILE_PATH_LEN];
+
+void setFilePath(const char * path, byte pos) {
+    snprintf(filePath, FILE_PATH_LEN, path, pos);
+    Serial.println(filePath);
+}
 
 bool assignStorageValues(File* file) {
     char c;
