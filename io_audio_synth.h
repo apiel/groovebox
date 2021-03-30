@@ -137,12 +137,12 @@ class IO_AudioSynth : public AudioDumb {
     void noteOn(byte note, byte velocity) {
         lastNote = note;
 
-        wave.waveform.amplitude(wave.amplitude * velocity / 127);
-        wave.waveform.frequency(wave.frequency + NOTE_FREQ[_C4] -
-                                NOTE_FREQ[note]);
-        wave.waveTable.reset()
-            ->amplitude(wave.amplitude * velocity / 127)
-            ->frequency(wave.frequency + NOTE_FREQ[_C4] - NOTE_FREQ[note]);
+        float _freq = wave.frequency + NOTE_FREQ[note] - NOTE_FREQ[_C4];
+        float _amp = wave.amplitude * velocity / 127;
+
+        wave.waveform.amplitude(_amp);
+        wave.waveform.frequency(_freq);
+        wave.waveTable.reset()->amplitude(_amp)->frequency(_freq);
         modulation.lfoMod.phase(0.0);
         modulation.envMod.noteOn();
         env.noteOn();
