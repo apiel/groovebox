@@ -24,9 +24,10 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.print(note, DEC);
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
-    if (channel == 1) {
-        noteOn(2, note, velocity);
-    } else if (!defaultNoteOnHandler(channel, note, velocity)) {
+    // if (channel == 1) {
+    //     noteOn(2, note, velocity);
+    // } else
+    if (!defaultNoteOnHandler(channel, note, velocity)) {
         if (currentView == VIEW_PATTERN) {
             patternNoteOnHandler(channel, note, velocity);
         } else if (currentView == VIEW_SYNTH) {
@@ -50,22 +51,22 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    if (channel == 1) {
-        noteOff(2, note, velocity);
-    } else {
-        if (currentView == VIEW_PATTERN) {
-            patternNoteOffHandler(channel, note, velocity);
-        } else if (currentView == VIEW_SYNTH) {
-            synthNoteOffHandler(channel, note, velocity);
-        } else if (currentView == VIEW_SEQUENCES) {
-            sequencesNoteOffHandler(channel, note, velocity);
-        } else if (currentView == VIEW_MAIN) {
-            mainNoteOffHandler(channel, note, velocity);
-        } else if (currentView == VIEW_ROUTER) {
-            routerNoteOffHandler(channel, note, velocity);
-        }
-        displayUpdate();
+    // if (channel == 1) {
+    //     noteOff(2, note, velocity);
+    // }
+
+    if (currentView == VIEW_PATTERN) {
+        patternNoteOffHandler(channel, note, velocity);
+    } else if (currentView == VIEW_SYNTH) {
+        synthNoteOffHandler(channel, note, velocity);
+    } else if (currentView == VIEW_SEQUENCES) {
+        sequencesNoteOffHandler(channel, note, velocity);
+    } else if (currentView == VIEW_MAIN) {
+        mainNoteOffHandler(channel, note, velocity);
+    } else if (currentView == VIEW_ROUTER) {
+        routerNoteOffHandler(channel, note, velocity);
     }
+    displayUpdate();
 }
 
 void controlChangeHandler(byte channel, byte control, byte value) {

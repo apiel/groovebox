@@ -19,6 +19,9 @@ void synthNoteOnHandler(byte channel, byte note, byte velocity) {
         } else if (note == 20) {
             synth[currentSynth].toggleAdsr();
         }
+    } else if (channel == 1) {
+        Serial.println("should play note");
+        synth[currentSynth].noteOn(note, velocity);
     }
 }
 
@@ -27,6 +30,8 @@ void synthNoteOffHandler(byte channel, byte note, byte velocity) {
         if (note == 22 || note == 46) {
             synth[currentSynth].noteOff();
         }
+    } else if (channel == 1) {
+        synth[currentSynth].noteOff(note);
     }
 }
 

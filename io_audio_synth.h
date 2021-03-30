@@ -21,6 +21,8 @@ class IO_AudioSynth : public AudioDumb {
     AudioFilterStateVariable filter;
     IO_AudioSynthWave wave;
 
+    byte lastNote = 0;
+
     bool useAdsr = true;
 
     float attackMs = 0;
@@ -133,6 +135,8 @@ class IO_AudioSynth : public AudioDumb {
     void noteOn() { noteOn(_C4, 127); }
 
     void noteOn(byte note, byte velocity) {
+        lastNote = note;
+
         wave.waveform.amplitude(wave.amplitude * velocity / 127);
         wave.waveform.frequency(wave.frequency + NOTE_FREQ[_C4] -
                                 NOTE_FREQ[note]);
@@ -144,9 +148,13 @@ class IO_AudioSynth : public AudioDumb {
         env.noteOn();
     }
 
-    void noteOff() {
-        env.noteOff();
-        modulation.envMod.noteOff();
+    void noteOff() { noteOff(_C4); }
+
+    void noteOff(byte note) {
+        if (note == lastNote) {
+            env.noteOff();
+            modulation.envMod.noteOff();
+        }
     }
 };
 

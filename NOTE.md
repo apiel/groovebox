@@ -15,6 +15,8 @@
 
 # keyboard
 
+- Should there be a master keyboard and then a keyboard that can be use for anything???
+
 - select input and output
     - input is midi channel of keyboard
     - output can be midi channel or internal instrument: synth, sample, ...

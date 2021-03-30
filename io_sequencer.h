@@ -37,7 +37,7 @@ void sequencerNextHandler(byte type, byte output, byte note, byte velocity) {
         if (type == SEQ_NOTE_ON) {
             synth[getSynthChannel(output)].noteOn(note, velocity);
         } else {
-            synth[getSynthChannel(output)].noteOff();
+            synth[getSynthChannel(output)].noteOff(note);
         }
     } else if (isMidiOutput(output)) {
         if (type == SEQ_NOTE_ON) {
