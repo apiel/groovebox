@@ -26,11 +26,11 @@ class AudioSynthWaveTableSD : public AudioStream {
     }
 
     void update(void) {
-        audio_block_t *block = allocate();
+        if (magnitude == 0.0 || phase_increment == 0.0) return;
 
-        if (block == NULL || magnitude == 0.0 || phase_increment == 0.0)
-            return;  // but here we might still want to increase the
-                     // phase_accumulator
+        audio_block_t *block = allocate();
+        if (block == NULL)
+            return;
 
         audio_block_t *modinput = receiveReadOnly();
 
